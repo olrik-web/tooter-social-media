@@ -1,7 +1,7 @@
 import { json, redirect, createCookieSessionStorage } from "@remix-run/node";
 import { comparePassword, createUser } from "./user.server";
 import connectDb from "~/db/connectDb.server";
-import { validateEmail, validateName, validatePasswordConfirmation, validatePasswords } from "./validate.server";
+import { validateUsername, validateName, validatePasswordConfirmation, validatePasswords } from "./validate.server";
 
 // The secret is used as an extra layer of security in the cookie-based session.
 const { SECRET } = process.env;
@@ -9,7 +9,7 @@ const { SECRET } = process.env;
 // Creating a cookie session storage.
 const storage = createCookieSessionStorage({
   cookie: {
-    name: "snipelephant-session",
+    name: "awp-exam-session", // TODO: Change name here
     secure: process.env.NODE_ENV === "production",
     secrets: [SECRET],
     sameSite: "lax",
@@ -21,12 +21,12 @@ const storage = createCookieSessionStorage({
 
 /*
  * This function is called when the user clicks sign up.
- * It should check if a user with the same email already exists and if not create a new user.
- * It should also create a session for the user and redirect them to /snippets.
+ * It should check if a user with the same username already exists and if not create a new user.
+ * It should also create a session for the user and redirect them to /explore.
  */
-export async function signup(email, password, passwordConfirmation, firstName, lastName) {
+export async function signup(username, password, passwordConfirmation, firstName, lastName) {
   const errors = {
-    email: { message: validateEmail(email) },
+    username: { message: validateUsername(username) },
     password: { message: validatePasswords(password) },
     passwordConfirmation: { message: validatePasswordConfirmation(password, passwordConfirmation) },
     firstName: { message: validateName(firstName) },
@@ -34,7 +34,7 @@ export async function signup(email, password, passwordConfirmation, firstName, l
   };
 
   if (
-    errors.email.message ||
+    errors.username.message ||
     errors.password.message ||
     errors.firstName.message ||
     errors.lastName.message ||
@@ -46,18 +46,18 @@ export async function signup(email, password, passwordConfirmation, firstName, l
   // Connecting to the database
   const db = await connectDb();
 
-  // Checking if a user with the same email exist
-  const userExists = await db.models.users.findOne({
-    email: email,
+  // Checking if a user with the same username exist
+  const userExists = await db.models.User.findOne({
+    username,
   });
 
-  // If a user with the same email exists we return an error message and a status code of 400 (Bad Request).
+  // If a user with the same username exists we return an error message and a status code of 400 (Bad Request).
   if (userExists) {
-    return json({ email: { message: "A user already exists with that email.", status: 400 } });
+    return json({ username: { message: "A user already exists with that username.", status: 400 } });
   }
 
   // Creating a user document in the database
-  const newUser = await createUser({ email, password, passwordConfirmation, firstName, lastName });
+  const newUser = await createUser({ username, password, passwordConfirmation, firstName, lastName });
 
   // If the user document is not created we return an error message and a status code of 400.
   if (!newUser) {
@@ -68,9 +68,9 @@ export async function signup(email, password, passwordConfirmation, firstName, l
   }
 
   // Getting the newly created user's ID.
-  const user = await db.models.users.findOne({ email: email }, { _id: 1 });
-  // Creating a session with user id and redirect to /snippets. We convert the ObjectId to a JSON string.
-  return createUserSession(JSON.stringify(user._id), "/snippets");
+  const user = await db.models.User.findOne({ username }, { _id: 1 });
+  // Creating a session with user id and redirect to /explore. We convert the ObjectId to a JSON string.
+  return createUserSession(JSON.stringify(user._id), "/explore");
 }
 
 // This function creates a session for the user and redirects them to a page.
@@ -99,7 +99,7 @@ export async function getUser(request) {
 
   try {
     // Getting the user from the database using the user id.
-    const user = await db.models.users.findById(userId);
+    const user = await db.models.User.findById(userId);
     return user;
   } catch {
     return json({
@@ -124,6 +124,16 @@ export async function getUserId(request) {
   return JSON.parse(userId);
 }
 
+// This function is called in most loader functions to check if the user is logged in and if not redirect them to /login.
+export async function requireUserLogin(request) {
+  const userId = await getUserId(request);
+
+  // If the user is not found we return a redirect response to /login.
+  if (!userId) return redirect("/login");
+
+  return userId;
+}
+
 // This function gets the request headers cookie session
 function getUserSession(request) {
   return storage.getSession(request.headers.get("Cookie"));
@@ -141,22 +151,22 @@ export async function logOut(request) {
 
 /*
  * This function is called when the user clicks login.
- * It should check if a user with the same email exists and if the password is correct.
- * It should also create a session for the user and redirect them to /snippets.
+ * It should check if a user with the same username exists and if the password is correct.
+ * It should also create a session for the user and redirect them to /explore.
  */
-export async function logIn(email, password) {
+export async function logIn(username, password) {
   const db = await connectDb();
-  // Checking if a user with the same email exist
-  const userExists = await db.models.users.findOne({
-    email: email,
+  // Checking if a user with the same username exist
+  const userExists = await db.models.User.findOne({
+    username,
   });
 
-  // If a user with the same email does not exist we return an error message and a status code of 400 (Bad Request).
+  // If a user with the same username does not exist we return an error message and a status code of 400 (Bad Request).
   if (!userExists) {
     return json({
-      email: {
-        message: "Password or email is incorrect.",
-        fields: { email: email, password: password },
+      username: {
+        message: "Password or username is incorrect.",
+        fields: { username, password },
         status: 400,
       },
     });
@@ -169,13 +179,13 @@ export async function logIn(email, password) {
   if (!isPasswordCorrect) {
     return json({
       password: {
-        message: "Password or email is incorrect.",
-        fields: { email: email, password: password },
+        message: "Password or username is incorrect.",
+        fields: { username, password },
         status: 400,
       },
     });
   }
 
-  // Creating a session with user id and redirect to /snippets. We convert the ObjectId to a JSON string.
-  return createUserSession(JSON.stringify(userExists._id), "/snippets");
+  // Creating a session with user id and redirect to /explore. We convert the ObjectId to a JSON string.
+  return createUserSession(JSON.stringify(userExists._id), "/explore");
 }

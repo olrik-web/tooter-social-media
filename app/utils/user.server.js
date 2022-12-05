@@ -5,7 +5,7 @@ import connectDb from "~/db/connectDb.server";
  * This is one of the functions that is called when the user clicks sign up.
  * It creates a user document in the database and returns the user document.
  */
-export async function createUser({ email, password, firstName, lastName }) {
+export async function createUser({ username, password, firstName, lastName }) {
   // Connecting to the database
   const db = await connectDb();
 
@@ -18,13 +18,11 @@ export async function createUser({ email, password, firstName, lastName }) {
   const hashPassword = bcrypt.hashSync(password, salt);
 
   // Creating a user document in the database with the hashed password.
-  const newUser = await db.models.users.create({
-    email: email,
+  const newUser = await db.models.User.create({
+    username,
     password: hashPassword,
-    profile: {
-      firstName: firstName,
-      lastName: lastName,
-    },
+    firstName,
+    lastName,
   });
   return newUser;
 }
