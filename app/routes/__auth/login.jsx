@@ -33,11 +33,11 @@ export default function Login() {
 export async function action({ request }) {
   // Get the email and password from the request body.
   const form = await request.formData();
-  const email = form.get("email");
+  const username = form.get("username");
   const password = form.get("password");
 
   // Log in the user and return the response.
-  return await logIn(email, password);
+  return await logIn(username, password);
 }
 
 // Catch any unexpected errors and display them to the user.

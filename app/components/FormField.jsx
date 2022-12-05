@@ -28,6 +28,8 @@ export default function FormField({
           placeholder={placeholderText}
           required={isRequired}
           autoFocus={autoFocus}
+          aria-label={label}
+          aria-required={isRequired}
         />
       ) : element == "textarea" ? (
         <textarea
@@ -37,6 +39,10 @@ export default function FormField({
           defaultValue={defaultValue}
           className={styleClass}
           placeholder={placeholderText}
+          required={isRequired}
+          autoFocus={autoFocus}
+          aria-label={label}
+          aria-required={isRequired}
         />
       ) : (
         <select
@@ -46,6 +52,9 @@ export default function FormField({
           defaultValue={defaultValue}
           onChange={handleLanguageChange}
           required={isRequired}
+          autoFocus={autoFocus}
+          aria-label={label}
+          aria-required={isRequired}
         >
           {children}
         </select>

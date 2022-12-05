@@ -31,16 +31,16 @@ export default function SignUp() {
 
 // This is the action function that will be called when the form is submitted.
 export async function action({ request }) {
-  // Get the email, password, passwordConfirmation, firstName, and lastName from the request body.
+  // Get the username, password, passwordConfirmation, firstName, and lastName from the request body.
   const form = await request.formData();
-  const email = form.get("email");
+  const username = form.get("username");
   const password = form.get("password");
   const passwordConfirmation = form.get("passwordConfirmation");
   const firstName = form.get("firstName");
   const lastName = form.get("lastName");
 
   // Sign up the user and return the response.
-  return await signup(email, password, passwordConfirmation, firstName, lastName);
+  return await signup(username, password, passwordConfirmation, firstName, lastName);
 }
 
 // Catch any unexpected errors and display them to the user.

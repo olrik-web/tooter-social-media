@@ -1,9 +1,6 @@
-// This function checks if the email is valid using a regular expression and returns an error message if it is not. 
-export function validateEmail(email) {
-  var validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-  if (!email || !validRegex.test(email)) {
-    return "Please enter a valid email address (e.g. example@mail.com).";
-  }
+// This function checks if the username is empty and if it is it returns an error message.
+export function validateUsername(username) {
+  if (!username || username.length === 0) return "Please enter a username.";
 }
 
 // This function checks if the password is at least 6 characters long and returns an error message if it is not.
@@ -22,5 +19,5 @@ export function validatePasswordConfirmation(password, passwordConfirmation) {
 
 // This function checks if the name is empty and returns an error message if it is.
 export function validateName(name) {
-  if (!name) return "Please enter a name.";
+  if (!name || name.length === 0) return "Please enter a name.";
 }
