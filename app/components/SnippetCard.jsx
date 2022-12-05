@@ -1,16 +1,12 @@
 import { Form, Link } from "@remix-run/react";
 import { useEffect, useState } from "react";
-import { docco, atomOneDark } from "react-syntax-highlighter/dist/cjs/styles/hljs";
 import { PencilSquareIcon, HeartIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { HeartIcon as HeartIconFill } from "@heroicons/react/24/solid";
 import Button from "./Button";
 import Modal from "./Modal";
-import SyntaxHighlighterField from "./SyntaxHighlighterField";
 import Toast from "./Toast";
 
 export default function SnippetCard({ snippet, snippetFolder, details, onSubmit, isDeleting, isFailedDelete }) {
-  const [darkMode, setDarkMode] = useState(false);
-  const [copied, setCopied] = useState(false);
   const updateText = new Date(snippet?.updatedAt).toUTCString();
   const [showDeleteSnippetFolderModal, setShowDeleteSnippetFolderModal] = useState(false);
   const [showDeleteToast, setShowDeleteToast] = useState(false);
@@ -93,15 +89,6 @@ export default function SnippetCard({ snippet, snippetFolder, details, onSubmit,
             <p className="text-xs text-slate-900">{snippet?.language}</p>
             <p className="text-xs text-slate-900">{snippetFolder?.name}</p>
           </div>
-          <SyntaxHighlighterField
-            language={snippet?.language}
-            code={snippet?.code}
-            theme={darkMode ? atomOneDark : docco}
-            darkMode={darkMode}
-            setDarkMode={setDarkMode}
-            copied={copied}
-            setCopied={setCopied}
-          />
           {!details && (
             <Button path={`/snippets/${snippet?.snippetFolder}/${snippet?._id}`} classType="primary">
               View

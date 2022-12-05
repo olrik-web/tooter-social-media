@@ -66,7 +66,7 @@ const userSchema = new Schema(
 
 const postSchema = new Schema(
   {
-    description: {
+    content: {
       type: String,
       required: true,
       maxlength: 500, // Limit the description to 500 characters.
@@ -103,12 +103,16 @@ const postSchema = new Schema(
         ref: "Tag",
       },
     ],
-    media: [
+    images: [
       {
-        type: Schema.Types.ObjectId,
-        ref: "Media",
+        type: String,
       },
     ],
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
+    
   },
   { timestamps: true }
 );
@@ -168,6 +172,7 @@ const tagSchema = new Schema(
     name: {
       type: String,
       required: true,
+      unique: true,
       trim: true,
     },
     posts: [
@@ -176,20 +181,6 @@ const tagSchema = new Schema(
         ref: "Post",
       },
     ],
-  },
-  { timestamps: true }
-);
-
-const mediaSchema = new Schema(
-  {
-    url: {
-      type: String,
-      required: true,
-    },
-    post: {
-      type: Schema.Types.ObjectId,
-      ref: "Post",
-    },
   },
   { timestamps: true }
 );
@@ -220,10 +211,5 @@ export const models = [
     name: "Tag",
     schema: tagSchema,
     collection: "tags",
-  },
-  {
-    name: "Media",
-    schema: mediaSchema,
-    collection: "media",
   },
 ];

@@ -1,7 +1,7 @@
 import { json } from "@remix-run/node";
 import connectDb from "~/db/connectDb.server";
 import { getUserId } from "./auth.server";
-
+// TODO: Delte this file
 /*
  * This function creates a snippet folder document in the database and returns the snippet folder document.
  */
