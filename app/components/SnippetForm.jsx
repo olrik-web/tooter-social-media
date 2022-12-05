@@ -1,7 +1,6 @@
 import { Form, useParams } from "@remix-run/react";
 import Button from "./Button";
 import FormField from "./FormField";
-import FormFieldCode from "./FormFieldCode";
 import * as languages from "react-syntax-highlighter/dist/cjs/languages/hljs";
 import { docco, atomOneDark } from "react-syntax-highlighter/dist/cjs/styles/hljs";
 import { useEffect, useState } from "react";
@@ -72,22 +71,6 @@ export default function SnippetForm({ errors, action, snippetFolders, snippet, i
             </option>
           ))}
         </FormField>
-        <FormFieldCode
-          label="Code"
-          name="code"
-          type="text"
-          errors={errors?.code}
-          element="textarea"
-          defaultValue={code}
-          language={language}
-          handleCodeChange={handleCodeChange}
-          setDarkMode={setDarkMode}
-          darkMode={darkMode}
-          theme={darkMode ? atomOneDark : docco}
-          copied={copied}
-          setCopied={setCopied}
-          isRequired={true}
-        />
         <FormField
           label="Snippet Folder"
           name="snippetFolder"
