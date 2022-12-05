@@ -17,12 +17,12 @@ const userSchema = new Schema(
     },
     firstName: {
       type: String,
-      required: [true, "Please provide a first name."],
+      required: true,
       trim: true,
     },
     lastName: {
       type: String,
-      required: [true, "Please provide a last name."],
+      required: true,
       trim: true,
     },
     avatar: {
@@ -68,8 +68,8 @@ const postSchema = new Schema(
   {
     description: {
       type: String,
-      required: [true, "Please provide a description."],
-      maxlength: 500,
+      required: true,
+      maxlength: 500, // Limit the description to 500 characters.
     },
     createdBy: {
       type: Schema.Types.ObjectId,

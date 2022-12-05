@@ -28,7 +28,8 @@ export default function App() {
         <Links />
       </head>
       <body>
-        <Navbar />
+        {/* TODO: New Navbar here */}
+        {/* <Navbar /> */}
         <Outlet />
         <ScrollRestoration />
         <Scripts />
