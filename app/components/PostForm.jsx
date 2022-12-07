@@ -17,8 +17,10 @@ export default function SnippetForm({ errors, action, groups, post, isCreating }
 
   useEffect(() => {
     if (post) {
-      setPostTags(post.tags.join(","));
-      setPostGroup(post.group._id);
+      console.log(post);
+      const tags = post.tags?.map((tag) => tag.name).join(", ");
+      setPostTags(tags);
+      setPostGroup(post.group?._id);
       setPostIamges(post.images.join(","));
       setPostContent(post.content);
     }

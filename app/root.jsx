@@ -12,7 +12,7 @@ const {
 
 export const meta = () => ({
   charset: "utf-8",
-  title: "Snip Elephant",
+  title: "Tooter",
   viewport: "width=device-width,initial-scale=1",
 });
 
@@ -27,7 +27,7 @@ export default function App() {
         <Meta />
         <Links />
       </head>
-      <body>
+      <body className="bg-slate-50 text-black dark:bg-black dark:text-gray-50">
         {/* TODO: New Navbar here */}
         {/* <Navbar /> */}
         <Outlet />

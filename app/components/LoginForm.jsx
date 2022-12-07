@@ -6,9 +6,9 @@ import Button from "./Button";
 export default function LoginForm({ errors, action }) {
   return (
     //  The action prop will be "/login" or "/signup" depending on which page the LoginForm is used on.
-    <Form method="POST" action={action} className="rounded-2xl bg-gray-200 p-6 w-96">
-      <FormField label="Username" name="username" type="username" errors={errors?.username} element="input" isRequired={true} />
-      <FormField label="Password" name="password" type="password" errors={errors?.password} element="input" isRequired={true} />
+    <Form method="POST" action={action} className="rounded-2xl p-6 w-96">
+      <FormField label="Username" name="username" type="username" errors={errors?.username} element="input" isRequired={true} placeholderText="Username" />
+      <FormField label="Password" name="password" type="password" errors={errors?.password} element="input" isRequired={true} placeholderText="Password" />
 
       {/* If the action is "/signup", show the password confirmation and first/last name fields. */}
       {action === "/signup" && (

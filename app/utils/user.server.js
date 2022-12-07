@@ -23,6 +23,7 @@ export async function createUser({ username, password, firstName, lastName }) {
     password: hashPassword,
     firstName,
     lastName,
+    avatar: `https://avatars.dicebear.com/api/bottts/${username}.svg`,
   });
   return newUser;
 }
