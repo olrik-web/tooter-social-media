@@ -1,65 +1,75 @@
-import { Form, NavLink } from "@remix-run/react";
+import { Form, Link, NavLink } from "@remix-run/react";
 import { useState } from "react";
-import { PlusIcon, MinusIcon } from "@heroicons/react/24/outline";
+import {
+  HomeIcon,
+  ClockIcon,
+  BookmarkIcon,
+  UserGroupIcon,
+  UserIcon,
+  ArrowRightIcon,
+  ArrowLeftIcon,
+  HashtagIcon,
+  PlusIcon,
+} from "@heroicons/react/24/outline";
 import FormField from "./FormField";
-import SnippetFolderCard from "./SnippetFolderCard";
 
-export default function NavigationMenu({ actionData, snippetFolders }) {
-  const [newCollection, setNewCollection] = useState(false);
-  const classActive = "block py-2 pr-4 pl-3 text-white bg-blue-700";
-  const classNotActive = "block py-2 pr-4 pl-3 text-gray-400 hover:bg-gray-700 hover:text-white transition duration-300 ease-in-out";
+export default function NavigationMenu({ actionData, snippetFolders, isExpanded, setIsExpanded }) {
+  const classNotActive = `flex flex-row items-center h-16 ${
+    isExpanded ? "justify-start pl-8" : "justify-center"
+  } hover:bg-gray-900 transition-all duration-300 `;
+  const classActive = "bg-gray-900 text-white font-bold";
 
   return (
-    <nav className="fixed w-72 h-full top-16 left-0 pt-10 overflow-x-hidden text-center bg-gray-900 text-white">
-      <div className="flex flex-row justify-between items-center mx-8">
-        <h2 className="text-2xl font-bold text-center text-gray-400">Collections</h2>
-        {newCollection ? (
-          <button onClick={() => setNewCollection(false)} className="text-blue-500">
-            <MinusIcon className="w-6 h-6" />
-          </button>
-        ) : (
-          <button onClick={() => setNewCollection(true)} className=" text-blue-500">
-            <PlusIcon className="w-6 h-6" />
-          </button>
-        )}
-      </div>
-      {newCollection && (
-        <Form method="POST" action="/snippets" className="flex flex-col mx-8">
-          <FormField label="Name" name="name" type="text" errors={actionData?.name} element="input" />
-          <button
-            type="submit"
-            className="w-full p-2 my-2 text-white bg-blue-500 rounded-lg shadow-sm focus:outline-none focus:bg-blue-600"
-          >
-            Create
-          </button>
-        </Form>
-      )}
-      <hr className="my-4" />
-      <ul>
-        <li>
-          <NavLink
-            end
-            to="/snippets"
-            className={({ isActive }) =>
-              isActive
-                ? classActive + " text-lg font-bold text-center"
-                : classNotActive + " text-lg font-bold text-center"
-            }
-          >
-            All snippets
-          </NavLink>
-        </li>
-        {snippetFolders.map((snippet) => (
-          <li key={snippet._id}>
-            <NavLink
-              to={snippet._id.toString()}
-              className={({ isActive }) => (isActive ? classActive : classNotActive)}
-            >
-              <SnippetFolderCard snippet={snippet} />
-            </NavLink>
-          </li>
-        ))}
-      </ul>
+    <nav
+      className={`fixed h-screen flex flex-col flex-shrink-0 m-auto ${
+        isExpanded ? "w-48" : "w-16"
+      } transition-all duration-300`}
+    >
+      {/* Logo */}
+      <Link to="/explore" className={classNotActive} title="Tooter" aria-label="Tooter">
+        <img className="w-6 h-6" src="/images/logo.png" alt="Tooter Logo" />
+        <span className={`${isExpanded ? "block ml-2 font-bold" : "hidden"}`}>Tooter</span>
+      </Link>
+      {/* Explore */}
+      <NavLink to="/explore" className={({ isActive }) => (isActive ? classNotActive + classActive : classNotActive)} title="Explore" aria-label="Explore">
+        <HashtagIcon className="w-6 h-6" />
+        <span className={`${isExpanded ? "block ml-2" : "hidden"}`}>Explore</span>
+      </NavLink>
+      {/* Recent */}
+      <NavLink
+        to="/public/local"
+        className={({ isActive }) => (isActive ? classNotActive + classActive : classNotActive)}
+        title="Recent"
+        aria-label="Recent"
+      >
+        <ClockIcon className="w-6 h-6" />
+        <span className={`${isExpanded ? "block ml-2" : "hidden"}`}>Recent</span>
+      </NavLink>
+      {/* Bookmarks */}
+      <NavLink to="/bookmarks" className={({ isActive }) => (isActive ? classNotActive + classActive : classNotActive)} title="Bookmarks" aria-label="Bookmarks">
+        <BookmarkIcon className="w-6 h-6" />
+        <span className={`${isExpanded ? "block ml-2" : "hidden"}`}>Bookmarks</span>
+      </NavLink>
+      {/* Groups */}
+      <NavLink to="/groups" className={({ isActive }) => (isActive ? classNotActive + classActive : classNotActive)} title="Groups" aria-label="Groups">
+        <UserGroupIcon className="w-6 h-6" />
+        <span className={`${isExpanded ? "block ml-2" : "hidden"}`}>Groups</span>
+      </NavLink>
+      {/* Profile TODO: Add username to navlink, so it isn't active on another users profile */}
+      <NavLink to="/profile" className={({ isActive }) => (isActive ? classNotActive + classActive : classNotActive)} title="Profile" aria-label="Profile">
+        <UserIcon className="w-6 h-6" />
+        <span className={`${isExpanded ? "block ml-2" : "hidden"}`}>Profile</span>
+      </NavLink>
+      {/* Toot */}
+      <NavLink to="/toot" className={({ isActive }) => (isActive ? classNotActive + classActive : classNotActive)} title="New Toot" aria-label="New Toot">
+        <PlusIcon className="w-6 h-6" />
+        <span className={`${isExpanded ? "block ml-2" : "hidden"}`}>New Toot</span>
+      </NavLink>
+      {/* Expand/Collapse */}
+      <button className={classNotActive} onClick={() => setIsExpanded(!isExpanded)} title="Expand/Collapse" aria-label="Expand/Collapse">
+        {isExpanded ? <ArrowLeftIcon className="w-6 h-6" /> : <ArrowRightIcon className="w-6 h-6" />}
+        <span className={`${isExpanded ? "block ml-2" : "hidden"}`}>Minimize</span>
+      </button>
     </nav>
   );
 }

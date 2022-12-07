@@ -9,7 +9,6 @@ export default function PostCard({ post, group, user, currentUser, detailView, o
   const [showDeletePostModal, setShowDeletePostModal] = useState(false);
   const [showDeleteToast, setShowDeleteToast] = useState(false);
   let postDate = new Date();
-  console.log(post);
 
   // Check if post.createdAt is today.
   const isToday = new Date(post?.createdAt).toDateString() === new Date().toDateString();
