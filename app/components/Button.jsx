@@ -2,11 +2,11 @@ import { useNavigate } from "@remix-run/react";
 
 export default function Button({ type = "button", classType, path, children, onClick, disabled, name, value }) {
   const classPrimary =
-    "bg-blue-700 hover:bg-blue-900 text-white font-bold my-2 py-2 px-4 rounded-xl transition duration-300 ease-in-out transform hover:-translate-y-1";
+    "bg-blue-500 text-white font-bold my-2 py-2 px-4 rounded-3xl hover:bg-blue-700 transition duration-300 ease-in-out";
   const classSecondary =
-    "bg-slate-200 text-blue-700 hover:text-blue-900 font-bold  my-2 py-2 px-4 rounded-xl transition duration-300 ease-in-out transform hover:-translate-y-1";
+    "font-bold  my-2 py-2 px-4 border border-gray-600 rounded-3xl hover:bg-gray-200 dark:hover:bg-neutral-800 transition duration-300 ease-in-out";
   const classDanger =
-    "bg-red-700 hover:bg-red-900 text-white font-bold my-2 py-2 px-4 rounded-xl transition duration-300 ease-in-out transform hover:-translate-y-1";
+    "bg-red-500 text-white font-bold my-2 py-2 px-4 rounded-3xl hover:bg-red-700 transition duration-300 ease-in-out";
 
   const navigate = useNavigate();
   function navigateTo() {

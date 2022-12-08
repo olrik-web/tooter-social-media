@@ -14,7 +14,7 @@ export async function loader({ request }) {
   // Find the current user using the userId from the session.
   const db = await connectDb();
   // Find the posts with the most stars.
-  const posts = await db.models.Post.find().sort({ stars: -1 }).limit(20);
+  const posts = await db.models.Post.find().sort({ createdAt: -1 }).limit(20);
   // Get the user for each post and add it to the post.
   // TODO: This is a bit of a hack. We should be able to use populate() to do this. Or something else?
   const postsWithUsers = await Promise.all(
@@ -71,7 +71,7 @@ export default function ExplorePage() {
   return (
     <div className="flex flex-row">
       <div className="w-full">
-        <h1 className="text-3xl font-bold border-x border-b border-gray-600 p-4">Explore</h1>
+        <h1 className="text-3xl font-bold border-x border-b border-gray-600 p-2">Explore</h1>
         <div>
           {posts.map((post) => (
             <PostCard key={post._id} post={post} user={post.user} currentUser={currentUser} requestUrl={requestUrl} />

@@ -128,8 +128,11 @@ export async function getUserId(request) {
 export async function requireUserLogin(request) {
   const userId = await getUserId(request);
 
+
   // If the user is not found we return a redirect response to /login.
-  if (!userId) return redirect("/login");
+  if (!userId) {
+    throw redirect("/login");
+  }
 
   return userId;
 }

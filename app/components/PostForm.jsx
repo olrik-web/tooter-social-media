@@ -5,20 +5,18 @@ import { useEffect, useState } from "react";
 
 // This component is used on the create and update post pages.
 export default function SnippetForm({ errors, action, groups, post, isCreating }) {
-  const params = useParams();
   const [postTags, setPostTags] = useState("");
   const [postGroup, setPostGroup] = useState("");
   const [postImages, setPostIamges] = useState("");
   const [postContent, setPostContent] = useState("");
 
-  
-
-  // If we are updating a snippet, set the initial values.
-
+  // If we are updating a post, set the initial values.
   useEffect(() => {
     if (post) {
-      setPostTags(post.tags.join(","));
-      setPostGroup(post.group._id);
+      console.log(post);
+      const tags = post.tags?.map((tag) => tag.name).join(", ");
+      setPostTags(tags);
+      setPostGroup(post.group?._id);
       setPostIamges(post.images.join(","));
       setPostContent(post.content);
     }
@@ -27,7 +25,7 @@ export default function SnippetForm({ errors, action, groups, post, isCreating }
   return (
     <>
       {/* The action will be "/update" or "/create" depending on which page the SnippetForm is used on. */}
-      <Form method="POST" action={action} className="rounded-2xl bg-gray-200 p-6">
+      <Form method="POST" action={action}>
         {/* If there are errors, display them. */}
         {errors && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
@@ -45,6 +43,7 @@ export default function SnippetForm({ errors, action, groups, post, isCreating }
           errors={errors?.content}
           element="textarea"
           isRequired={true}
+          placeholderText="What do you want to share?"
         />
 
         {/* The group field. */}
@@ -56,7 +55,7 @@ export default function SnippetForm({ errors, action, groups, post, isCreating }
           errors={errors?.group}
           element="select"
           handleGroupChange={setPostGroup}
-          > 
+        >
           {/* If there are no groups, display a message. */}
           {groups.length === 0 && <option value="">You are not a member of any groups.</option>}
           {/* If there are groups, display them. */}
@@ -66,7 +65,7 @@ export default function SnippetForm({ errors, action, groups, post, isCreating }
             </option>
           ))}
         </FormField>
-       
+
         {/* The tags field. */}
         <FormField
           label="Tags (separate with commas)"
@@ -75,6 +74,7 @@ export default function SnippetForm({ errors, action, groups, post, isCreating }
           type="text"
           errors={errors?.tags}
           element="input"
+          placeholderText="e.g. javascript, react, remix"
         />
 
         {/* The images field. */}
@@ -85,6 +85,7 @@ export default function SnippetForm({ errors, action, groups, post, isCreating }
           type="text"
           errors={errors?.images}
           element="input"
+          placeholderText="e.g. https://i.imgur.com/abc123.jpg, https://i.imgur.com/def456.jpg" 
         />
 
         {/* The submit button. */}
@@ -95,9 +96,7 @@ export default function SnippetForm({ errors, action, groups, post, isCreating }
         </div>
       </Form>
       {/* TODO: Check if this is necessary. This error message will be displayed if something went really wrong.*/}
-      <div className="text-xs font-semibold text-center tracking-wide text-red-500 w-full">
-        {errors?.error || errors}
-      </div>
+      <div className="text-xs font-semibold text-center tracking-wide text-red-500 w-full">{errors?.error || errors}</div>
     </>
   );
 }
