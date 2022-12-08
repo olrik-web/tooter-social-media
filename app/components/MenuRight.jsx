@@ -3,10 +3,10 @@ import SearchBar from "./SearchBar.jsx";
 
 export default function MenuRight({ users, tags, handleSearchTermChange }) {
   return (
-    <div className="sticky top-0 m-2">
+    <div className="sticky top-0 mx-8 my-4">
       <SearchBar handleSearchTermChange={handleSearchTermChange} />
       {/* Search results */}
-      <div className="mt-2 p-2 rounded-3xl dark:bg-gray-800">
+      <div className="mt-4 p-2 rounded-3xl dark:bg-gray-800">
         <h2 className="text-xl font-bold">Users</h2>
         {users.map((user) => (
           <Link
@@ -19,7 +19,7 @@ export default function MenuRight({ users, tags, handleSearchTermChange }) {
           </Link>
         ))}
       </div>
-      <div className="mt-2 p-2 rounded-3xl dark:bg-gray-800">
+      <div className="mt-4 p-2 rounded-3xl dark:bg-gray-800">
         <h2 className="text-xl font-bold">Tags</h2>
         {tags.map((tag) => (
           <Link

@@ -1,29 +1,24 @@
-import { Form, Link, NavLink } from "@remix-run/react";
-import { useState } from "react";
+import { Link, NavLink } from "@remix-run/react";
 import {
-  HomeIcon,
   ClockIcon,
   BookmarkIcon,
-  UserGroupIcon,
   UserIcon,
+  UserGroupIcon,
   ArrowRightIcon,
   ArrowLeftIcon,
   HashtagIcon,
   PlusIcon,
 } from "@heroicons/react/24/outline";
-import FormField from "./FormField";
 
-export default function NavigationMenu({ actionData, snippetFolders, isExpanded, setIsExpanded }) {
+export default function NavigationMenu({ currentUser, isExpanded, setIsExpanded }) {
   const classNotActive = `flex flex-row items-center h-16 ${
-    isExpanded ? "justify-start pl-8" : "justify-center"
-  } hover:bg-gray-900 transition-all duration-300 `;
+    isExpanded ? "justify-start pl-12" : "justify-center"
+  } hover:bg-gray-900 transition-all duration-300 rounded-3xl `;
   const classActive = "bg-gray-900 text-white font-bold";
 
   return (
     <nav
-      className={`fixed h-screen flex flex-col flex-shrink-0 m-auto ${
-        isExpanded ? "w-48" : "w-16"
-      } transition-all duration-300`}
+      className={`ml-4 fixed h-screen flex flex-col gap-y-2 flex-shrink-0 m-auto ${isExpanded ? "w-56" : "w-16"} transition-all duration-300`}
     >
       {/* Logo */}
       <Link to="/explore" className={classNotActive} title="Tooter" aria-label="Tooter">
@@ -31,7 +26,12 @@ export default function NavigationMenu({ actionData, snippetFolders, isExpanded,
         <span className={`${isExpanded ? "block ml-2 font-bold" : "hidden"}`}>Tooter</span>
       </Link>
       {/* Explore */}
-      <NavLink to="/explore" className={({ isActive }) => (isActive ? classNotActive + classActive : classNotActive)} title="Explore" aria-label="Explore">
+      <NavLink
+        to="/explore"
+        className={({ isActive }) => (isActive ? classNotActive + classActive : classNotActive)}
+        title="Explore"
+        aria-label="Explore"
+      >
         <HashtagIcon className="w-6 h-6" />
         <span className={`${isExpanded ? "block ml-2" : "hidden"}`}>Explore</span>
       </NavLink>
@@ -45,26 +45,63 @@ export default function NavigationMenu({ actionData, snippetFolders, isExpanded,
         <ClockIcon className="w-6 h-6" />
         <span className={`${isExpanded ? "block ml-2" : "hidden"}`}>Recent</span>
       </NavLink>
-      {/* Bookmarks */}
-      <NavLink to="/bookmarks" className={({ isActive }) => (isActive ? classNotActive + classActive : classNotActive)} title="Bookmarks" aria-label="Bookmarks">
-        <BookmarkIcon className="w-6 h-6" />
-        <span className={`${isExpanded ? "block ml-2" : "hidden"}`}>Bookmarks</span>
-      </NavLink>
-      {/* Groups */}
-      <NavLink to="/groups" className={({ isActive }) => (isActive ? classNotActive + classActive : classNotActive)} title="Groups" aria-label="Groups">
-        <UserGroupIcon className="w-6 h-6" />
-        <span className={`${isExpanded ? "block ml-2" : "hidden"}`}>Groups</span>
-      </NavLink>
-      {/* Profile TODO: Add username to navlink, so it isn't active on another users profile */}
-      <NavLink to="/profile" className={({ isActive }) => (isActive ? classNotActive + classActive : classNotActive)} title="Profile" aria-label="Profile">
-        <UserIcon className="w-6 h-6" />
-        <span className={`${isExpanded ? "block ml-2" : "hidden"}`}>Profile</span>
-      </NavLink>
-      {/* Toot */}
-      <NavLink to="/toot" className={({ isActive }) => (isActive ? classNotActive + classActive : classNotActive)} title="New Toot" aria-label="New Toot">
-        <PlusIcon className="w-6 h-6" />
-        <span className={`${isExpanded ? "block ml-2" : "hidden"}`}>New Toot</span>
-      </NavLink>
+      {currentUser ? (
+        <>
+          {/* Bookmarks */}
+          <NavLink
+            to="/bookmarks"
+            className={({ isActive }) => (isActive ? classNotActive + classActive : classNotActive)}
+            title="Bookmarks"
+            aria-label="Bookmarks"
+          >
+            <BookmarkIcon className="w-6 h-6" />
+            <span className={`${isExpanded ? "block ml-2" : "hidden"}`}>Bookmarks</span>
+          </NavLink>
+          {/* Groups */}
+          <NavLink
+            to="/groups"
+            className={({ isActive }) => (isActive ? classNotActive + classActive : classNotActive)}
+            title="Groups"
+            aria-label="Groups"
+          >
+            <UserGroupIcon className="w-6 h-6" />
+            <span className={`${isExpanded ? "block ml-2" : "hidden"}`}>Groups</span>
+          </NavLink>
+          {/* New Toot */}
+          <NavLink
+            to="/newToot"
+            className={({ isActive }) => (isActive ? classNotActive + classActive : classNotActive)}
+            title="New Toot"
+            aria-label="New Toot"
+          >
+            <PlusIcon className="w-6 h-6" />
+            <span className={`${isExpanded ? "block ml-2 whitespace-nowrap" : "hidden"}`}>New Toot</span>
+          </NavLink>
+          {/* Profile */}
+          <NavLink
+            to={`profile/@${currentUser.username}`}
+            className={({ isActive }) => (isActive ? classNotActive + classActive : classNotActive)}
+            title="Profile"
+            aria-label="Profile"
+          >
+            {/* User's avatar */}
+            <img className="w-6 h-6 rounded-full" src={currentUser.avatar} alt={`${currentUser.username}'s avatar`} />
+            {/* User's name */}
+            <span className={`${isExpanded ? "block ml-2" : "hidden"}`}>@{currentUser.username}</span>
+          </NavLink>
+        </>
+      ) : (
+        <NavLink
+          to="/login"
+          className={({ isActive }) => (isActive ? classNotActive + classActive : classNotActive)}
+          title="Login"
+          aria-label="Login"
+        >
+          <UserIcon className="w-6 h-6" />
+          <span className={`${isExpanded ? "block ml-2" : "hidden"}`}>Login</span>
+        </NavLink>
+      )}
+
       {/* Expand/Collapse */}
       <button className={classNotActive} onClick={() => setIsExpanded(!isExpanded)} title="Expand/Collapse" aria-label="Expand/Collapse">
         {isExpanded ? <ArrowLeftIcon className="w-6 h-6" /> : <ArrowRightIcon className="w-6 h-6" />}

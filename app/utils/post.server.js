@@ -121,6 +121,10 @@ export async function updatePost(request, params, content, groupId, tags, images
 
     // Update the post document in the database
     const post = await db.models.Post.findById(params.postId);
+    // Checking if the user is the owner of the post
+    if (post.createdBy.toString() !== user._id.toString()) {
+      return json({ error: "You are not the owner of this post.", status: 400 });
+    }
     post.content = content;
     post.group = groupId || null;
     post.tags = tagsArray;
@@ -145,7 +149,7 @@ export async function updatePost(request, params, content, groupId, tags, images
     }
   } catch (error) {
     console.log(error);
-    return json({ error: "Post could not be created.", status: 400 });
+    return json({ error: "Post could not be updated.", status: 400 });
   }
 }
 
@@ -218,7 +222,7 @@ export async function updatePostStar(postId, userId, redirectUrl) {
     // Saving the updated post document
     await post.save();
     await user.save();
-    
+
     return redirect(redirectUrl);
   } catch (error) {
     console.log(error);

@@ -12,7 +12,7 @@ export default function FormField({
   autoFocus,
 }) {
   const styleClass =
-    "w-full p-2 rounded-xl my-2 text-slate-900 border border-gray-300 focus:outline-none focus:ring focus:ring-blue-400 focus:border-transparent";
+    "w-full p-2 rounded-xl my-2 border border-gray-600 focus:outline-none focus:ring focus:ring-blue-400 focus:border-transparent dark:bg-black";
   return (
     <>
       <label htmlFor={name} defaultValue={defaultValue}>

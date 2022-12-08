@@ -3,7 +3,9 @@ import { useActionData, useLoaderData, useTransition } from "@remix-run/react";
 import PostForm from "~/components/PostForm";
 import connectDb from "~/db/connectDb.server";
 import { createPost } from "~/utils/post.server";
-import { requireUserLogin } from "~/utils/auth.server";
+import { requireUserLogin, getUser } from "~/utils/auth.server";
+import PostCard from "~/components/PostCard";
+import NavigateBackButton from "~/components/NavigateBackButton";
 
 export async function loader({ request }) {
   // If the user is not logged in, redirect them to the login page.
@@ -12,32 +14,43 @@ export async function loader({ request }) {
   // Display the user's groups.
   const db = await connectDb();
   // The lean option is used to return a plain JavaScript object instead of a Mongoose document. This is useful for performance reasons.
-  // https://mongoosejs.com/docs/tutorials/lean.html
   const groups = await db.models.Group.find({ members: { $in: [userId] } }, { name: 1, _id: 1 }).lean();
+  const currentUser = await getUser(request);
 
-  return json({ groups });
+  return json({ groups, currentUser });
 }
 
 export default function Create() {
   const actionData = useActionData();
   const { groups } = useLoaderData();
   const transition = useTransition();
-  console.log("Groups:");
-  console.log(groups);
-  // If we are creating a snippet or loading the snippet we use pending UI.
+  const { currentUser } = useLoaderData();
+
+  // Check if we are in a loading or submitting state and if the action is "create".
   const isCreating =
-    (transition.state === "submitting" || transition.state === "loading") &&
-    transition.submission?.formData.get("_action") === "create";
-  return (
+    (transition.state === "submitting" || transition.state === "loading") && transition.submission?.formData.get("_action") === "create";
+
+  // If we are in a loading or submitting state we show the post card.
+  // This is done to show the user what the post will look like before the request has made it to the server.
+  // This optimistic UI pattern is used to make the app feel more responsive.
+  return isCreating ? (
+    <>
+      <NavigateBackButton showText={true} />
+      <PostCard post={Object.fromEntries(transition.submission?.formData)} user={currentUser} currentUser={currentUser} detailView={true} />
+    </>
+  ) : (
+    // If we are not in a loading or submitting state we show the post form.
     <div>
-      <h4 className="text-3xl font-bold">New post</h4>
-      <hr className="my-4" />
+      <h1 className="text-3xl font-bold border-x border-b border-gray-600 p-2">New Toot</h1>
       <PostForm errors={actionData} groups={groups} isCreating={isCreating} />
     </div>
   );
 }
 
 export async function action({ request }) {
+  await requireUserLogin(request);
+  const user = await getUser(request);
+  console.log(user);
   // Get the data from the form.
   const form = await request.formData();
   const content = form.get("content").trim();
@@ -57,7 +70,7 @@ export async function action({ request }) {
     if (post.group) {
       return redirect(`/groups/${post.group._id}`);
     } else {
-      return redirect(`/public/${post._id}`);
+      return redirect(`/profile/@${user.username}/${post._id}`);
     }
   } else {
     return json("Error creating snippet", { status: 500 });
