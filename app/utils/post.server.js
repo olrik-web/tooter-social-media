@@ -57,6 +57,12 @@ export async function createPost(request, content, groupId, tags, images) {
       images: images || [],
     });
 
+    if (groupId) {
+      const group = await db.models.Group.findById(groupId);
+      group.posts.push(newPost._id);
+      await group.save();
+    }
+
     console.log("Post created successfully.");
 
     // Adding the post id to the tags post array
@@ -151,30 +157,6 @@ export async function updatePost(request, params, content, groupId, tags, images
     console.log(error);
     return json({ error: "Post could not be updated.", status: 400 });
   }
-}
-
-// This function uses pagination to return a certain number of post documents in the database.
-export async function getPostsPaginated(page, limit) {
-  // Connecting to the database
-  const db = await connectDb();
-
-  // Getting all the post documents in the database
-  const posts = await db.models.Post.find()
-    .skip((page - 1) * limit)
-    .limit(limit);
-  return posts;
-}
-
-// This function uses pagnation to return a certain number of post documents in the database that are created by the user with the given id.
-export async function getPostsByUserPaginated(userId, page, limit) {
-  // Connecting to the database
-  const db = await connectDb();
-
-  // Getting all the post documents in the database that are created by the user with the given id
-  const posts = await db.models.Post.find({ createdBy: userId })
-    .skip((page - 1) * limit)
-    .limit(limit);
-  return posts;
 }
 
 /*

@@ -8,6 +8,7 @@ import {
   ArrowLeftIcon,
   HashtagIcon,
   PlusIcon,
+  HomeIcon
 } from "@heroicons/react/24/outline";
 
 export default function NavigationMenu({ currentUser, isExpanded, setIsExpanded }) {
@@ -21,10 +22,20 @@ export default function NavigationMenu({ currentUser, isExpanded, setIsExpanded 
       className={`ml-4 fixed h-screen flex flex-col gap-y-2 flex-shrink-0 m-auto ${isExpanded ? "w-56" : "w-16"} transition-all duration-300`}
     >
       {/* Logo */}
-      <Link to="/explore" className={classNotActive} title="Tooter" aria-label="Tooter">
+      <Link to="/home" className={classNotActive} title="Tooter" aria-label="Tooter">
         <img className="w-6 h-6" src="/images/logo.png" alt="Tooter Logo" />
         <span className={`${isExpanded ? "block ml-2 font-bold" : "hidden"}`}>Tooter</span>
       </Link>
+      {/* Home */}
+      <NavLink
+        to="/home"
+        className={({ isActive }) => (isActive ? classNotActive + classActive : classNotActive)}
+        title="Home"
+        aria-label="Home"
+      >
+        <HomeIcon className="w-6 h-6" />
+        <span className={`${isExpanded ? "block ml-2" : "hidden"}`}>Home</span>
+      </NavLink>
       {/* Explore */}
       <NavLink
         to="/explore"

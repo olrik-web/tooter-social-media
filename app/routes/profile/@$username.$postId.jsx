@@ -21,38 +21,24 @@ export async function loader({ request, params }) {
   // Add the tags to the post.
   const postWithTags = { ...post.toObject(), tags };
   // Get the post's comments.
-  const comments = await db.models.Comment.find({ post: post._id });
-  // Map over the comments and populate it with the user.
-  const commentsWithUsers = await Promise.all(
-    comments.map(async (comment) => {
-      const user = await db.models.User.findOne({ _id: comment.createdBy });
-      return { ...comment.toObject(), user };
-    })
-  );
+  const comments = await db.models.Comment.find({ post: post._id }).populate("createdBy").sort({ createdAt: -1 });
 
-  return json({ user, currentUser, postWithTags, commentsWithUsers, requestUrl: request.url });
+  return json({ user, currentUser, postWithTags, comments, requestUrl: request.url });
 }
 
 export default function PostDetail() {
-  const { user, currentUser, postWithTags, commentsWithUsers, requestUrl } = useLoaderData();
+  const { user, currentUser, postWithTags, comments, requestUrl } = useLoaderData();
   // TODO: Use nested routing to show the comments. If comments fail to load the toot is still shown.
   return (
     <>
       <NavigateBackButton showText={true} />
-      <PostCard
-        post={postWithTags}
-        user={user}
-        currentUser={currentUser}
-        requestUrl={requestUrl}
-        comments={commentsWithUsers}
-        detailView={true}
-      />
+      <PostCard post={postWithTags} user={user} currentUser={currentUser} requestUrl={requestUrl} comments={comments} detailView={true} />
 
       {/* Form for creating comments */}
       <CommentForm postId={postWithTags._id} user={user} currentUser={currentUser} />
       {/* All comments */}
-      {commentsWithUsers.map((comment) => (
-        <CommentCard key={comment._id} comment={comment} author={user} />
+      {comments.map((comment) => (
+        <CommentCard key={comment._id} comment={comment} />
       ))}
     </>
   );
@@ -63,16 +49,15 @@ export async function action({ request, params }) {
   // Get the data from the form.
   const form = await request.formData();
   const action = form.get("_action");
-  const postId = form.get("id");
+  const postId = form.get("postId");
   const comment = form.get("comment");
 
-  console.log("action", action);
+  console.log("postId", postId);
 
   if (action === "comment") {
     return await createComment(userId, postId, comment);
   }
   if (action === "deletePost") {
-    console.log(postId);
     return await deletePost(userId, postId);
   }
 }

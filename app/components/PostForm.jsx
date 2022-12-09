@@ -4,7 +4,7 @@ import FormField from "./FormField";
 import { useEffect, useState } from "react";
 
 // This component is used on the create and update post pages.
-export default function SnippetForm({ errors, action, groups, post, isCreating }) {
+export default function PostForm({ errors, action, groups, post, isCreating }) {
   const [postTags, setPostTags] = useState("");
   const [postGroup, setPostGroup] = useState("");
   const [postImages, setPostIamges] = useState("");
@@ -13,7 +13,6 @@ export default function SnippetForm({ errors, action, groups, post, isCreating }
   // If we are updating a post, set the initial values.
   useEffect(() => {
     if (post) {
-      console.log(post);
       const tags = post.tags?.map((tag) => tag.name).join(", ");
       setPostTags(tags);
       setPostGroup(post.group?._id);
@@ -58,6 +57,7 @@ export default function SnippetForm({ errors, action, groups, post, isCreating }
         >
           {/* If there are no groups, display a message. */}
           {groups.length === 0 && <option value="">You are not a member of any groups.</option>}
+          <option value="">Select a group (optional)</option>
           {/* If there are groups, display them. */}
           {groups.map((group) => (
             <option key={group._id} value={group._id}>
@@ -85,7 +85,7 @@ export default function SnippetForm({ errors, action, groups, post, isCreating }
           type="text"
           errors={errors?.images}
           element="input"
-          placeholderText="e.g. https://i.imgur.com/abc123.jpg, https://i.imgur.com/def456.jpg" 
+          placeholderText="e.g. https://i.imgur.com/abc123.jpg, https://i.imgur.com/def456.jpg"
         />
 
         {/* The submit button. */}

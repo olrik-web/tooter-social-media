@@ -13,24 +13,11 @@ export async function loader({ request }) {
   const currentUser = await getUser(request);
   // Find the current user using the userId from the session.
   const db = await connectDb();
-  // Find the posts with the most stars.
-  const posts = await db.models.Post.find().populate("createdBy").populate("tags").sort({ createdAt: -1 }).limit(20);
-  // Get the user for each post and add it to the post.
-  // TODO: This is a bit of a hack. We should be able to use populate() to do this. Or something else?
-  // const postsWithUsers = await Promise.all(
-  //   posts.map(async (post) => {
-  //     const user = await db.models.User.findById(post.createdBy);
-  //     return { ...post.toObject(), user };
-  //   })
-  // );
+  // Find the most recent posts. Also populate the createdBy field with the user data and the tags field with the tag data.
+  const posts = await db.models.Post.find().populate("createdBy").populate("tags").sort({ createdAt: -1 }).limit(50);
 
-  // Get the post's tags.
-  const tags = await db.models.Tag.find({ _id: { $in: posts.tags } });
-  // Add the tags to the post.
-  // const postsWithTags = postsWithUsers.map((post) => {
-  //   const postTags = tags.filter((tag) => post.tags.includes(tag._id));
-  //   return { ...post, tags: postTags };
-  // });
+  // Remove posts that are posted in groups.
+  const filteredPosts = posts.filter((post) => post.group === null);
 
   const url = new URL(request.url);
   const searchTerm = url.searchParams.get("searchQuery") || "";
@@ -53,11 +40,11 @@ export async function loader({ request }) {
       : {}
   ).limit(5);
 
-  return json({ posts, currentUser, searchUsers, searchTags });
+  return json({ posts: filteredPosts, currentUser, searchUsers, searchTags, requestUrl: request.url });
 }
 
 export default function ExplorePage() {
-  const { posts, requestUrl, user, currentUser, searchUsers, searchTags } = useLoaderData();
+  const { posts, requestUrl, currentUser, searchUsers, searchTags } = useLoaderData();
 
   // Handle the search term change. Submit is called when the user types in the search bar. It submits the form with the new search term.
   const submit = useSubmit();
@@ -72,7 +59,7 @@ export default function ExplorePage() {
   return (
     <div className="flex flex-row">
       <div className="w-full">
-        <h1 className="text-3xl font-bold border-x border-b border-gray-600 p-2">Explore</h1>
+        <h1 className="text-3xl font-bold border-x border-b border-gray-600 p-4">Recent</h1>
         <div>
           {posts.map((post) => (
             <PostCard key={post._id} post={post} user={post.createdBy} currentUser={currentUser} requestUrl={requestUrl} />

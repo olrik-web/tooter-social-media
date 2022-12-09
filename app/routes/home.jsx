@@ -9,20 +9,15 @@ export async function loader({ request }) {
   const currentUser = await getUser(request);
   // Find the current user using the userId from the session.
   const db = await connectDb();
-  // Find the posts with the most stars. The posts can be in a public group but not in a private group.
-  // Also populate the createdBy and tags fields.
+  // Find posts from the current user's following list. Also populate the createdBy field with the user data and the tags field with the tag data.
+  const posts = await db.models.Post.find({ createdBy: { $in: currentUser.following } })
+    .populate("createdBy")
+    .populate("tags")
+    .sort({ createdAt: -1 })
+    .limit(100);
 
-  // Find the posts in no groups or in public groups
-  const posts = await db.models.Post.find().populate("createdBy").populate("tags").populate("group").sort({ stars: -1 }).limit(50);
-
-  // Remove private groups from the posts
-  // TODO: Maybe this can be done in the query above?
-  const filteredPosts = posts.filter((post) => {
-    if (post.group?.privacy === "private") {
-      return false;
-    }
-    return true;
-  });
+  // Remove posts that are posted in groups.
+  const filteredPosts = posts.filter((post) => post.group === null);
 
   const url = new URL(request.url);
   const searchTerm = url.searchParams.get("searchQuery") || "";
@@ -64,8 +59,15 @@ export default function ExplorePage() {
   return (
     <div className="flex flex-row">
       <div className="w-full">
-        <h1 className="text-3xl font-bold border-x border-b border-gray-600 p-4">Explore</h1>
+        <h1 className="text-3xl font-bold border-x border-b border-gray-600 p-4">Home</h1>
         <div>
+          {posts.length === 0 && (
+            <>
+              <p className="text-center text-xl">No posts to show.</p>
+              <p className="text-center text-xl">Follow some users to see their posts</p>
+              <p className="text-center text-xl">Or create a post to get started</p>
+            </>
+          )}
           {posts.map((post) => (
             <PostCard key={post._id} post={post} user={post.createdBy} currentUser={currentUser} requestUrl={requestUrl} />
           ))}

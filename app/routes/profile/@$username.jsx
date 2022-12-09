@@ -1,16 +1,15 @@
 import { json } from "@remix-run/node";
-import { Form, NavLink, Outlet, useLoaderData } from "@remix-run/react";
+import { Form, Link, NavLink, Outlet, useLoaderData } from "@remix-run/react";
 import connectDb from "~/db/connectDb.server";
-import { requireUserLogin, logOut } from "~/utils/auth.server";
+import { logOut, getUser } from "~/utils/auth.server";
 import Button from "~/components/Button";
 import { CalendarDaysIcon } from "@heroicons/react/24/outline";
 import NavigateBackButton from "~/components/NavigateBackButton";
+import { handleFollow } from "~/utils/follow.server";
 
 export async function loader({ request, params }) {
   // Get the user that is currently logged in.
-  await requireUserLogin(request);
-
-  console.log(request.url);
+  const currentUser = await getUser(request);
 
   // Find the current user using the userId from the session.
   const db = await connectDb();
@@ -19,14 +18,22 @@ export async function loader({ request, params }) {
   // Find the user's posts.
   const posts = await db.models.Post.find({ createdBy: user._id });
 
-  return json({ user, posts });
+  return json({ user, posts, currentUser });
 }
 
 export default function Profile() {
   // Get the user from the loader.
-  const { user, posts } = useLoaderData();
+  const { user, posts, currentUser } = useLoaderData();
   const postsCount = posts.length;
   const memberSince = new Date(user.createdAt).toLocaleDateString();
+
+  function isFollowing(currentUser, user) {
+    return currentUser.following.includes(user._id);
+  }
+
+  function isFollowedBy(currentUser, user) {
+    return currentUser.followers.includes(user._id);
+  }
 
   return (
     <>
@@ -42,13 +49,15 @@ export default function Profile() {
             <p className="text-sm text-gray-500">{postsCount} Toots</p>
           </div>
         </div>
-        <div className="px-4">
-          <Form method="post">
-            <Button type="submit" name="_action" value="logOut">
-              Log Out
-            </Button>
-          </Form>
-        </div>
+        {currentUser && currentUser?._id === user._id && (
+          <div className="px-4">
+            <Form method="post">
+              <Button type="submit" name="_action" value="logOut">
+                Log Out
+              </Button>
+            </Form>
+          </div>
+        )}
       </div>
       {/* TODO: Cover image */}
       {/* Profile picture */}
@@ -64,7 +73,7 @@ export default function Profile() {
             </h2>
             <p className="text-sm text-gray-500">@{user.username}</p>
           </div>
-          <Button path="settings">Edit profile</Button>
+          {currentUser && currentUser?._id === user._id && <Button path="settings">Edit profile</Button>}
         </div>
         <p className="text-sm my-4">{user.bio}</p>
         <div className="flex flex-row items-center justify-start gap-x-2">
@@ -72,18 +81,32 @@ export default function Profile() {
           <p className="text-sm text-gray-500">Member since {memberSince}</p>
         </div>
         <div className="flex flex-row items-center justify-start gap-x-2 my-2">
-          <p>
+          <Link to={`/profile/@${user.username}/following`}>
             {user.following.length} <span className="text-gray-500">Following</span>
-          </p>
-          <p>
+          </Link>
+          <Link to={`/profile/@${user.username}/followers`}>
             {user.followers.length} <span className="text-gray-500">Followers</span>
-          </p>
+          </Link>
+        </div>
+        {/* Text that shows if we are following or followed by the user. */}
+        <div className="my-2">{isFollowedBy(currentUser, user) && <p className="text-gray-500">@{user.username} follows you</p>}</div>
+        {/* Follow/unfollow button */}
+        <div className="flex flex-row items-center justify-start gap-x-2 my-2">
+          {/* Display a (un)follow button if we are logged in and not on our own profile. */}
+          {currentUser && currentUser?._id !== user._id && (
+            <Form method="post">
+              <Button type="submit" name="_action" value="follow">
+                {isFollowing(currentUser, user) ? "Unfollow" : "Follow"}
+              </Button>
+            </Form>
+          )}
         </div>
       </div>
       {/* Toots, replies, stars */}
       <div className="flex flex-row items-center justify-evenly my-4 gap-x-4 text-center">
         <NavLink
-          to={`/profile/@${user.username}/toots`}
+          end
+          to={`/profile/@${user.username}`}
           className={({ isActive }) =>
             isActive
               ? "w-full font-bold border-b-2 border-blue-600"
@@ -118,6 +141,14 @@ export default function Profile() {
   );
 }
 
-export function action({ request, params }) {
-  return logOut(request);
+export async function action({ request, params }) {
+  const form = await request.formData();
+  const action = form.get("_action");
+
+  if (action === "follow") {
+    return await handleFollow(request, params.username);
+  } else if (action === "logOut") {
+    return await logOut(request);
+  }
+  return null;
 }

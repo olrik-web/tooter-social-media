@@ -22,9 +22,8 @@ export async function loader({ request }) {
 
 export default function Create() {
   const actionData = useActionData();
-  const { groups } = useLoaderData();
+  const { groups, currentUser } = useLoaderData();
   const transition = useTransition();
-  const { currentUser } = useLoaderData();
 
   // Check if we are in a loading or submitting state and if the action is "create".
   const isCreating =

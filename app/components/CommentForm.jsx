@@ -6,14 +6,16 @@ export default function CommentForm({ postId, user, currentUser }) {
     <Form method="post">
       <input type="hidden" name="postId" value={postId} />
       <div className="flex flex-row items-center gap-x-4 py-2 mx-4">
-        <img
-          src={currentUser.avatar}
-          alt="avatar"
-          className="h-16 w-16 rounded-full border-hidden"
-        />
+        <Link to={`/profile/@${currentUser.username}`}>
+          <img src={currentUser.avatar} alt="avatar" className="h-16 w-16 rounded-full border-hidden" />
+        </Link>
         <div className="w-full dark:text-gray-500">
           <p>
-            Commenting on <Link to={`/profile/@${user.username}`} className="font-bold text-blue-600">@{user.username}</Link>'s toot
+            Commenting on{" "}
+            <Link to={`/profile/@${user.username}`} className="font-bold text-blue-600">
+              @{user.username}
+            </Link>
+            's <Link to={`/profile/@${user.username}/${postId}`} className="font-bold text-blue-600">Toot</Link>
           </p>
           <textarea
             name="comment"

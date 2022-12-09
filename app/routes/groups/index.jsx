@@ -1,27 +1,17 @@
-import { json } from "@remix-run/node";
-import { useLoaderData, useSubmit } from "@remix-run/react";
+import { requireUserLogin } from "~/utils/auth.server";
 import connectDb from "~/db/connectDb.server";
-import { getUser } from "~/utils/auth.server";
-import PostCard from "~/components/PostCard";
+import { Link, useLoaderData, useSubmit } from "@remix-run/react";
 import MenuRight from "~/components/MenuRight";
+import Button from "~/components/Button";
+import GroupCard from "~/components/GroupCard";
 
 export async function loader({ request }) {
-  const currentUser = await getUser(request);
-  // Find the current user using the userId from the session.
+  const userId = await requireUserLogin(request);
+  // Connect to the database
   const db = await connectDb();
-  // Find the posts with the most stars. The posts can be in a public group but not in a private group.
-  // Also populate the createdBy and tags fields.
-
-  // Find the posts in no groups or in public groups
-  const posts = await db.models.Post.find().populate("createdBy").populate("tags").populate("group").sort({ stars: -1 }).limit(50);
-
-  // Remove private groups from the posts
-  // TODO: Maybe this can be done in the query above?
-  const filteredPosts = posts.filter((post) => {
-    if (post.group?.privacy === "private") {
-      return false;
-    }
-    return true;
+  // Find the user's groups from user.groups
+  const groups = await db.models.Group.find({
+    members: userId,
   });
 
   const url = new URL(request.url);
@@ -44,12 +34,12 @@ export async function loader({ request }) {
         }
       : {}
   ).limit(5);
-
-  return json({ posts: filteredPosts, currentUser, searchUsers, searchTags, requestUrl: request.url });
+  // Return the groups
+  return { groups, searchUsers, searchTags };
 }
 
-export default function ExplorePage() {
-  const { posts, requestUrl, currentUser, searchUsers, searchTags } = useLoaderData();
+export default function Groups() {
+  const { groups, searchUsers, searchTags } = useLoaderData();
 
   // Handle the search term change. Submit is called when the user types in the search bar. It submits the form with the new search term.
   const submit = useSubmit();
@@ -64,10 +54,14 @@ export default function ExplorePage() {
   return (
     <div className="flex flex-row">
       <div className="w-full">
-        <h1 className="text-3xl font-bold border-x border-b border-gray-600 p-4">Explore</h1>
+        <div className="flex flex-row justify-between font-bold border-x border-b border-gray-600 ">
+          <h1 className="text-3xl p-4">Groups</h1>
+          <Button path="/groups/newGroup">New Group</Button>
+        </div>
         <div>
-          {posts.map((post) => (
-            <PostCard key={post._id} post={post} user={post.createdBy} currentUser={currentUser} requestUrl={requestUrl} />
+          {groups.length === 0 && <p className="text-gray-500">You are not a member of any groups.</p>}
+          {groups.map((group) => (
+            <GroupCard key={group._id} group={group} />
           ))}
         </div>
       </div>

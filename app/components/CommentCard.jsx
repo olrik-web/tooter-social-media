@@ -1,6 +1,6 @@
 import { Link } from "@remix-run/react";
 
-export default function CommentCard({ comment, author }) {
+export default function CommentCard({ comment }) {
   let commentDate = new Date();
 
   // Check if comment.createdAt is today.
@@ -23,27 +23,27 @@ export default function CommentCard({ comment, author }) {
 
   return (
     <div className="w-full border border-gray-600 grid grid-cols-[min-content_1fr] transition-opacity duration-500 ease-in-out">
-      <Link to={`/profile/@${comment.user.username}`} className="my-4 ml-2 w-12">
-        <img src={comment.user.avatar} alt="avatar" className="h-12 w-12 rounded-full" />
+      <Link to={`/profile/@${comment.createdBy.username}`} className="my-4 ml-2 w-12">
+        <img src={comment.createdBy.avatar} alt="avatar" className="h-12 w-12 rounded-full" />
       </Link>
       <div className="p-4">
         {/* Post and user info */}
         <div className="flex flex-row justify-between">
-          <Link to={`/profile/@${comment.user.username}`} className="flex flex-row">
-            {comment.user.firstName} {comment.user.lastName}
+          <Link to={`/profile/@${comment.createdBy.username}`} className="flex flex-row">
+            {comment.createdBy.firstName} {comment.createdBy.lastName}
             <span className="mx-2 text-sm text-gray-500">
-              @{comment.user.username} &#8226; {commentDate}
+              @{comment.createdBy.username} &#8226; {commentDate}
             </span>
           </Link>
         </div>
-        <Link to={`/profile/@${author.username}`} className="text-gray-500">
+        <div className="text-gray-500">
           <p>
-            Commenting on <span className="text-blue-500">@{author.username}</span>'s
-            <Link to={`/profile/@${author.username}/${comment.post}`}>
+            Commenting on <span className="text-blue-500">@{comment.createdBy.username}</span>'s
+            <Link to={`/profile/@${comment.createdBy.username}/${comment.post}`}>
               <span className="text-blue-500"> Toot</span>
             </Link>
           </p>
-        </Link>
+        </div>
         <p className="text-sm my-2">{comment?.content}</p>
       </div>
     </div>

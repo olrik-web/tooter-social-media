@@ -162,6 +162,11 @@ const groupSchema = new Schema(
         ref: "User",
       },
     ],
+    privacy: {
+      type: String,
+      enum: ["public", "private"],
+      default: "public",
+    },
     posts: [
       {
         type: Schema.Types.ObjectId,
