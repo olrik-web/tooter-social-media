@@ -1,7 +1,7 @@
 import { json } from "@remix-run/node";
 import { Form, Link, NavLink, Outlet, useLoaderData, useSubmit } from "@remix-run/react";
 import connectDb from "~/db/connectDb.server";
-import { requireUserLogin, logOut, getUser } from "~/utils/auth.server";
+import { requireUserLogin, logOut } from "~/utils/auth.server";
 import { updatePostBookmark, updatePostStar } from "~/utils/post.server";
 import Button from "~/components/Button";
 import { ArrowLeftIcon, CalendarDaysIcon } from "@heroicons/react/24/outline";
@@ -10,23 +10,25 @@ import NavigateBackButton from "~/components/NavigateBackButton";
 import MenuRight from "~/components/MenuRight";
 
 export async function loader({ request }) {
-  const currentUser = await getUser(request);
+  const currentUserId = await requireUserLogin(request);
   // Find the current user using the userId from the session.
   const db = await connectDb();
-  // Find the posts with the most stars.
-  const posts = await db.models.Post.find().sort({ stars: -1 }).limit(20);
+  const currentUser = await db.models.User.findById(currentUserId);
+  // Find the current user's bookmarks.
+  const bookmarks = await db.models.Post.find({ _id: { $in: currentUser.bookmarkedPosts } }).sort({ createdAt: -1 });
+  console.log(bookmarks);
   // Get the user for each post and add it to the post.
   // TODO: This is a bit of a hack. We should be able to use populate() to do this. Or something else?
-  const postsWithUsers = await Promise.all(
-    posts.map(async (post) => {
+  const bookmarksWithUsers = await Promise.all(
+    bookmarks.map(async (post) => {
       const user = await db.models.User.findById(post.createdBy);
       return { ...post.toObject(), user };
     })
   );
   // Get the post's tags.
-  const tags = await db.models.Tag.find({ _id: { $in: posts.tags } });
+  const tags = await db.models.Tag.find({ _id: { $in: bookmarks.tags } });
   // Add the tags to the post.
-  const postsWithTags = postsWithUsers.map((post) => {
+  const bookmarksWithTags = bookmarksWithUsers.map((post) => {
     const postTags = tags.filter((tag) => post.tags.includes(tag._id));
     return { ...post, tags: postTags };
   });
@@ -52,10 +54,10 @@ export async function loader({ request }) {
       : {}
   ).limit(5);
 
-  return json({ posts: postsWithTags, currentUser, searchUsers, searchTags });
+  return json({ posts: bookmarksWithTags, currentUser, searchUsers, searchTags });
 }
 
-export default function ExplorePage() {
+export default function BookmarksPage() {
   const { posts, requestUrl, user, currentUser, searchUsers, searchTags } = useLoaderData();
 
   // Handle the search term change. Submit is called when the user types in the search bar. It submits the form with the new search term.
@@ -71,7 +73,7 @@ export default function ExplorePage() {
   return (
     <div className="flex flex-row">
       <div className="w-full">
-        <h1 className="text-3xl font-bold border-x border-b border-gray-600 p-4">Explore</h1>
+        <h1 className="text-3xl font-bold border border-gray-600 p-2">Explore</h1>
         <div>
           {posts.map((post) => (
             <PostCard key={post._id} post={post} user={post.user} currentUser={currentUser} requestUrl={requestUrl} />

@@ -58,7 +58,6 @@ export async function loader({ request }) {
 
 export default function ExplorePage() {
   const { posts, requestUrl, user, currentUser, searchUsers, searchTags } = useLoaderData();
-  console.log(posts);
 
   // Handle the search term change. Submit is called when the user types in the search bar. It submits the form with the new search term.
   const submit = useSubmit();

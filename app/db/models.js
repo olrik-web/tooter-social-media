@@ -30,7 +30,12 @@ const userSchema = new Schema(
       // If for some reason no avatar is provided, use a default avatar.
       default: "/images/avatar.png",
     },
-    staredPosts: [
+    bio: {
+      type: String,
+      trim: true,
+      maxlength: 500,
+    },
+    starredPosts: [
       {
         type: Schema.Types.ObjectId,
         ref: "Post",
@@ -119,7 +124,7 @@ const postSchema = new Schema(
 
 const commentSchema = new Schema(
   {
-    description: {
+    content: {
       type: String,
       required: true,
       maxlength: 500,

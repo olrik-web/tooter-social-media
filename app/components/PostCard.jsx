@@ -118,7 +118,7 @@ export default function PostCard({ post, group, user, currentUser, detailView, o
           <div className="flex flex-row gap-x-2 my-2">
             {post?.tags.map((tag) => (
               <Link to={`/tags/${tag.name}`} key={tag._id}>
-                <p className="text-xs text-blue-600">#{tag?.name?.toUpperCase()}</p>
+                <p className="text-xs text-blue-600">#{tag.name.toUpperCase()}</p>
               </Link>
             ))}
           </div>
