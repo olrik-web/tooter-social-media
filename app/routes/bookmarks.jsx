@@ -11,7 +11,7 @@ export async function loader({ request }) {
   const db = await connectDb();
   const currentUser = await db.models.User.findById(currentUserId);
   // Find the current user's bookmarks. Also populate the createdBy field with the user data and the tags field with the tag data.
-  const bookmarks = await db.models.Post.find({ _id: { $in: currentUser.bookmarkedPosts } })
+  const bookmarks = await db.models.Post.find({ _id: { $in: currentUser?.bookmarkedPosts } })
     .populate("createdBy")
     .populate("tags")
     .populate("group")
@@ -62,7 +62,7 @@ export default function BookmarksPage() {
           {posts.length === 0 && <p className="text-xl">You have no bookmarks yet.</p>}
           {posts.map((post) =>
             post.group ? (
-              post.group.members.includes(currentUser._id) ? (
+              post.group.members.includes(currentUser?._id) ? (
                 <PostCard key={post._id} post={post} user={post.createdBy} currentUser={currentUser} requestUrl={requestUrl} />
               ) : null
             ) : (

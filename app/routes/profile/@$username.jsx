@@ -28,11 +28,11 @@ export default function Profile() {
   const memberSince = new Date(user.createdAt).toLocaleDateString();
 
   function isFollowing(currentUser, user) {
-    return currentUser.following.includes(user._id);
+    return currentUser?.following.includes(user._id);
   }
 
   function isFollowedBy(currentUser, user) {
-    return currentUser.followers.includes(user._id);
+    return currentUser?.followers.includes(user._id);
   }
 
   return (

@@ -22,7 +22,7 @@ export default function NavigationMenu({ currentUser, isExpanded, setIsExpanded 
       className={`ml-4 fixed h-screen flex flex-col gap-y-2 flex-shrink-0 m-auto ${isExpanded ? "w-56" : "w-16"} transition-all duration-300`}
     >
       {/* Logo */}
-      <Link to="/home" className={classNotActive} title="Tooter" aria-label="Tooter">
+      <Link to="/" className={classNotActive} title="Tooter" aria-label="Tooter">
         <img className="w-6 h-6" src="/images/logo.png" alt="Tooter Logo" />
         <span className={`${isExpanded ? "block ml-2 font-bold" : "hidden"}`}>Tooter</span>
       </Link>

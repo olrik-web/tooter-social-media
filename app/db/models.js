@@ -47,12 +47,6 @@ const userSchema = new Schema(
         ref: "Post",
       },
     ],
-    groups: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "Group",
-      },
-    ],
     following: [
       {
         type: Schema.Types.ObjectId,
@@ -117,7 +111,6 @@ const postSchema = new Schema(
       type: Boolean,
       default: false,
     },
-    
   },
   { timestamps: true }
 );

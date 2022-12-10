@@ -1,10 +1,7 @@
-import { useActionData, useLoaderData, useTransition } from "@remix-run/react";
-import GroupForm from "~/components/GroupForm";
+import { useLoaderData } from "@remix-run/react";
 import PostCard from "~/components/PostCard";
-import NavigateBackButton from "~/components/NavigateBackButton";
-import { getUser, requireUserLogin } from "~/utils/auth.server";
-import { json, redirect } from "@remix-run/node";
-import { createGroup } from "~/utils/group.server";
+import { requireUserLogin } from "~/utils/auth.server";
+import { redirect } from "@remix-run/node";
 import connectDb from "~/db/connectDb.server";
 
 export async function loader({ request, params }) {

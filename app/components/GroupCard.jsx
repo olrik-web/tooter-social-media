@@ -11,12 +11,16 @@ export default function GroupCard({ group, user, detailView = false }) {
             <p>{group.description}</p>
           </div>
           <div>
-            <p className="font-bold text-gray-600">Privacy:</p>
+            <p className="font-bold text-gray-600">Privacy</p>
             <p>{group.privacy}</p>
           </div>
           <div>
-            <p className="font-bold text-gray-600">Members:</p>
-            <p>{group.members.length}</p>
+            <p className="font-bold text-gray-600">Members</p>
+            <p>{group.members?.length}</p>
+          </div>
+          <div>
+            <p className="font-bold text-gray-600">Toots</p>
+            <p>{group.posts.length}</p>
           </div>
           {!detailView && <Button path={`/groups/${group._id}`}>View Group</Button>}
           {detailView && group.createdBy === user?._id && <Button path={`/groups/${group._id}/edit`}>Edit</Button>}

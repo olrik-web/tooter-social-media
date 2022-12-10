@@ -6,8 +6,8 @@ export default function CommentForm({ postId, user, currentUser }) {
     <Form method="post">
       <input type="hidden" name="postId" value={postId} />
       <div className="flex flex-row items-center gap-x-4 py-2 mx-4">
-        <Link to={`/profile/@${currentUser.username}`}>
-          <img src={currentUser.avatar} alt="avatar" className="h-16 w-16 rounded-full border-hidden" />
+        <Link to={`/profile/@${currentUser?.username}`}>
+          <img src={currentUser?.avatar} alt="avatar" className="h-16 w-16 rounded-full border-hidden" />
         </Link>
         <div className="w-full dark:text-gray-500">
           <p>

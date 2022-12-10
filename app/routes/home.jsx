@@ -10,7 +10,7 @@ export async function loader({ request }) {
   // Find the current user using the userId from the session.
   const db = await connectDb();
   // Find posts from the current user's following list. Also populate the createdBy field with the user data and the tags field with the tag data.
-  const posts = await db.models.Post.find({ createdBy: { $in: currentUser.following } })
+  const posts = await db.models.Post.find({ createdBy: { $in: currentUser?.following } })
     .populate("createdBy")
     .populate("tags")
     .sort({ createdAt: -1 })

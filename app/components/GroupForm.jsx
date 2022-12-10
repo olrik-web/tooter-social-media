@@ -8,13 +8,15 @@ export default function GroupForm({ errors, action, group, isCreating }) {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [privacy, setPrivacy] = useState("");
+  const [memberUsernames, setMemberUsernames] = useState([]);
 
-  // If we are updating a post, set the initial values.
   useEffect(() => {
     if (group) {
       setName(group.name);
       setDescription(group.description);
+      // TODO: Privacy is not being set correctly. It is always set to "public".
       setPrivacy(group.privacy);
+      setMemberUsernames(group.members.map((member) => member.username));
     }
   }, [group]);
 
@@ -68,6 +70,18 @@ export default function GroupForm({ errors, action, group, isCreating }) {
           <option value="private">Private</option>
         </FormField>
 
+        {/* The members field. */}
+        <FormField
+          label="Members (comma separated)"
+          name="memberUsernames"
+          defaultValue={memberUsernames}
+          type="text"
+          errors={errors?.members}
+          element="input"
+          isRequired={true}
+          placeholderText="Enter a list of members for your group. (comma separated)"
+        />
+
         {/* The submit button. */}
         <div className="w-full text-center">
           <Button type="submit" classType="primary" name="_action" value="create">
@@ -75,8 +89,6 @@ export default function GroupForm({ errors, action, group, isCreating }) {
           </Button>
         </div>
       </Form>
-      {/* TODO: Check if this is necessary. This error message will be displayed if something went really wrong.*/}
-      <div className="text-xs font-semibold text-center tracking-wide text-red-500 w-full">{errors?.error || errors}</div>
     </>
   );
 }
