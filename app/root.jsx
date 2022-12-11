@@ -1,8 +1,7 @@
 import { useState } from "react";
 import NavigationMenu from "./components/NavigationMenu";
 import styles from "./styles/app.css";
-import { getUser, requireUserLogin } from "~/utils/auth.server";
-import connectDb from "./db/connectDb.server";
+import { getUser } from "~/utils/auth.server";
 
 const { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration, useLoaderData } = require("@remix-run/react");
 

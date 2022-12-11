@@ -5,7 +5,9 @@ import { redirect } from "@remix-run/node";
 import connectDb from "~/db/connectDb.server";
 
 export async function loader({ request, params }) {
+  // Require the user to be logged in.
   const userId = await requireUserLogin(request);
+  // Connect to the database.
   const db = await connectDb();
 
   // Find all posts for the group. Also populate the createdBy and tags fields.
@@ -29,6 +31,7 @@ export async function loader({ request, params }) {
       },
     });
 
+  // If the group doesn't exist, redirect to the groups page.
   if (!group) {
     return redirect("/groups");
   }
@@ -46,6 +49,16 @@ export default function Index() {
           <PostCard key={post._id} post={post} user={post.createdBy} tags={post.tags} />
         ))}
       </div>
+    </div>
+  );
+}
+
+// Catch any unexpected errors and display them to the user.
+export function ErrorBoundary({ error }) {
+  return (
+    <div className="text-red-500 text-center">
+      <h1 className="text-2xl font-bold">Error</h1>
+      <p>{error.message}</p>
     </div>
   );
 }

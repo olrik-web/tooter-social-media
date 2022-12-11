@@ -1,5 +1,5 @@
 import { Form, Link } from "@remix-run/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { ChatBubbleOvalLeftIcon, StarIcon, BookmarkIcon } from "@heroicons/react/24/solid";
 import Modal from "./Modal";
@@ -36,28 +36,6 @@ export default function PostCard({ post, group, user, currentUser, detailView, o
     setShowDeleteToast(false);
   }
 
-  useEffect(() => {
-    // Get all snippet card elements where the snippet id matches the snippet id of the snippet that is being deleted.
-    const postCards = document.querySelectorAll(`[data-post-id="${post?._id}"]`);
-
-    if (isFailedDelete) {
-      // If the snippet failed to delete, show the delete toast.
-      setShowDeleteToast(true);
-      // Show all of the snippet cards that were hidden when the delete button was clicked.
-      postCards.forEach((postCard) => {
-        postCard.classList.remove("opacity-0");
-        postCard.classList.add("opacity-100");
-      });
-    } else if (isDeleting) {
-      // Hide all of the snippet cards that are being deleted.
-      postCards.forEach((postCard) => {
-        postCard.classList.remove("opacity-100");
-        postCard.classList.add("opacity-0");
-      });
-      // Add the opacity-0 class to the snippet card element.
-    }
-  }, [isDeleting, isFailedDelete, post?._id]);
-
   function hasUserStarredPost() {
     // Check if the user has starred the post.
     if (currentUser?.starredPosts?.includes(post?._id)) {
@@ -75,10 +53,7 @@ export default function PostCard({ post, group, user, currentUser, detailView, o
   }
 
   return (
-    <div
-      data-post-id={post?._id}
-      className="w-full border border-gray-600 grid grid-cols-[min-content_1fr] transition-opacity duration-500 ease-in-out"
-    >
+    <div className="w-full border border-gray-600 grid grid-cols-[min-content_1fr]">
       <Link to={`/profile/@${user?.username}`} className="my-4 ml-2 w-12">
         <img src={user?.avatar} alt="avatar" className="h-12 w-12 rounded-full" />
       </Link>

@@ -49,7 +49,6 @@ export default function Create() {
 export async function action({ request }) {
   await requireUserLogin(request);
   const user = await getUser(request);
-  console.log(user);
   // Get the data from the form.
   const form = await request.formData();
   const content = form.get("content").trim();
@@ -64,7 +63,7 @@ export async function action({ request }) {
   // Create a new post.
   const post = await createPost(request, content, groupId, tagsArray, imagesArray);
 
-  // Check if the snippet was created successfully and redirect to the snippet folder page.
+  // Check if the post was created successfully and redirect either to the group or the user's profile.
   if (post._id) {
     if (post.group) {
       return redirect(`/groups/${post.group._id}`);
@@ -72,7 +71,7 @@ export async function action({ request }) {
       return redirect(`/profile/@${user.username}/${post._id}`);
     }
   } else {
-    return json("Error creating snippet", { status: 500 });
+    return json("Error creating post", { status: 500 });
   }
 }
 

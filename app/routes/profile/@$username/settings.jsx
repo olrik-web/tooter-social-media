@@ -3,8 +3,10 @@ import { useActionData, useLoaderData } from "@remix-run/react";
 import { getUser, requireUserLogin, editUser } from "~/utils/auth.server";
 import LoginForm from "~/components/LoginForm";
 
-export async function loader({ request, params }) {
+export async function loader({ request }) {
+  // Require the user to be logged in.
   await requireUserLogin(request);
+  // Get the user from the request.
   const currentUser = await getUser(request);
 
   return json({ currentUser });
@@ -24,13 +26,15 @@ export default function Index() {
 
 // This is the action function that will be called when the form is submitted.
 export async function action({ request }) {
+  // Require the user to be logged in.
+  await requireUserLogin(request);
   // Get the username, password, passwordConfirmation, firstName, and lastName from the request body.
   const form = await request.formData();
-  const username = form.get("username");
-  const password = form.get("password");
-  const passwordConfirmation = form.get("passwordConfirmation");
-  const firstName = form.get("firstName");
-  const lastName = form.get("lastName");
+  const username = form.get("username").trim();
+  const password = form.get("password").trim();
+  const passwordConfirmation = form.get("passwordConfirmation").trim();
+  const firstName = form.get("firstName").trim();
+  const lastName = form.get("lastName").trim();
 
   const currentUser = await getUser(request);
 

@@ -14,7 +14,7 @@ import {
 export default function NavigationMenu({ currentUser, isExpanded, setIsExpanded }) {
   const classNotActive = `flex flex-row items-center h-16 ${
     isExpanded ? "justify-start pl-12" : "justify-center"
-  } hover:bg-gray-900 transition-all duration-300 rounded-3xl `;
+  } hover:bg-gray-900 hover:text-white transition-all duration-300 rounded-3xl `;
   const classActive = "bg-gray-900 text-white font-bold";
 
   return (

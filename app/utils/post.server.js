@@ -28,25 +28,19 @@ export async function createPost(request, content, groupId, tags, images) {
   }
 
   try {
-    console.log("Creating post...");
     // If the tags are not empty, then we check if the tags already exist in the database. If they do, then we add the tag id to the tags array. If they don't, then we create a new tag document and add the tag id to the tags array.
     let tagsArray = [];
-    console.log("tags: ", tags);
     if (tags && tags.length > 0) {
       for (let i = 0; i < tags.length; i++) {
         const tag = await db.models.Tag.findOne({ name: tags[i] });
         if (tag) {
-          console.log("Tag already exists.");
           tagsArray.push(tag._id);
         } else {
-          console.log("Tag does not exist.");
           const newTag = await db.models.Tag.create({ name: tags[i] });
           tagsArray.push(newTag._id);
         }
       }
     }
-    console.log("Created tags...");
-    console.log(tagsArray);
 
     // Creating the post document in the database
     const newPost = await db.models.Post.create({
@@ -63,8 +57,6 @@ export async function createPost(request, content, groupId, tags, images) {
       await group.save();
     }
 
-    console.log("Post created successfully.");
-
     // Adding the post id to the tags post array
     if (tagsArray.length > 0) {
       for (const tagId of tagsArray) {
@@ -75,7 +67,7 @@ export async function createPost(request, content, groupId, tags, images) {
     }
     return newPost;
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return json({ error: "Post could not be created.", status: 400 });
   }
 }
@@ -104,26 +96,19 @@ export async function updatePost(request, params, content, groupId, tags, images
   try {
     // Find the user document with the given id
     const user = await db.models.User.findById(userId);
-    console.log("Updating post...");
     // If the tags are not empty, then we check if the tags already exist in the database. If they do, then we add the tag id to the tags array. If they don't, then we create a new tag document and add the tag id to the tags array.
     let tagsArray = [];
-    console.log("tags: ", tags);
     if (tags && tags.length > 0) {
       for (let i = 0; i < tags.length; i++) {
         const tag = await db.models.Tag.findOne({ name: tags[i] });
         if (tag) {
-          console.log("Tag already exists.");
           tagsArray.push(tag._id);
         } else {
-          console.log("Tag does not exist.");
           const newTag = await db.models.Tag.create({ name: tags[i] });
           tagsArray.push(newTag._id);
         }
       }
     }
-    console.log("Created tags...");
-    console.log(tagsArray);
-    console.log(request.params);
 
     // Update the post document in the database
     const post = await db.models.Post.findById(params.postId);
@@ -137,8 +122,6 @@ export async function updatePost(request, params, content, groupId, tags, images
     post.images = images || [];
     await post.save();
 
-    console.log("Post updated successfully.");
-
     // Adding the post id to the tags post array
     if (tagsArray.length > 0) {
       for (const tagId of tagsArray) {
@@ -147,14 +130,14 @@ export async function updatePost(request, params, content, groupId, tags, images
         await tag.save();
       }
     }
-    
+
     if (groupId) {
       return redirect(`/groups/${groupId}/${post._id}`);
     } else {
       return redirect(`/profile/@${user.username}/${post._id}`);
     }
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return json({ error: "Post could not be updated.", status: 400 });
   }
 }
@@ -163,20 +146,25 @@ export async function updatePost(request, params, content, groupId, tags, images
  * This function deletes the post document with the given id.
  */
 export async function deletePost(userId, postId) {
-  // Connecting to the database
-  const db = await connectDb();
+  try {
+    // Connecting to the database
+    const db = await connectDb();
 
-  // Getting the post document with the given id
-  const post = await db.models.Post.findById(postId);
+    // Getting the post document with the given id
+    const post = await db.models.Post.findById(postId);
 
-  if (post.createdBy.toString() !== userId.toString()) {
-    return json({ error: "You are not authorized to delete this post.", status: 401 });
-  } else {
-    // Updating the post document's deleted property to true
-    post.isDeleted = true;
-    // Saving the updated post document
-    const updatedSnippet = await post.save();
-    return updatedSnippet;
+    if (post.createdBy.toString() !== userId.toString()) {
+      return json({ error: "You are not authorized to delete this post.", status: 401 });
+    } else {
+      // Updating the post document's deleted property to true
+      post.isDeleted = true;
+      // Saving the updated post document
+      const updatePost = await post.save();
+      return updatePost;
+    }
+  } catch (error) {
+    console.error(error);
+    return json({ error: "Post could not be deleted.", status: 400 });
   }
 }
 
@@ -207,75 +195,93 @@ export async function updatePostStar(postId, userId, redirectUrl) {
 
     return redirect(redirectUrl);
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return json({ error: "Post could not be updated.", status: 400 });
   }
 }
 
 // This function updates the post bookmark field of the post document with the given id.
 export async function updatePostBookmark(postId, userId, redirectUrl) {
-  // Connecting to the database
-  const db = await connectDb();
+  try {
+    // Connecting to the database
+    const db = await connectDb();
 
-  // Getting the post document with the given id
-  const post = await db.models.Post.findById(postId);
-  const user = await db.models.User.findById(userId);
+    // Getting the post document with the given id
+    const post = await db.models.Post.findById(postId);
+    const user = await db.models.User.findById(userId);
 
-  // Checking if the user is already in the bookmarks array
-  const hasBookmarked = post.bookmarks.includes(userId);
+    // Checking if the user is already in the bookmarks array
+    const hasBookmarked = post.bookmarks.includes(userId);
 
-  // Updating the bookmarks array
-  if (hasBookmarked) {
-    post.bookmarks = post.bookmarks.filter((bookmark) => bookmark != userId);
-    user.bookmarkedPosts = user.bookmarkedPosts.filter((bookmark) => bookmark != postId);
-  } else {
-    post.bookmarks.push(userId);
-    user.bookmarkedPosts.push(postId);
+    // Updating the bookmarks array
+    if (hasBookmarked) {
+      post.bookmarks = post.bookmarks.filter((bookmark) => bookmark != userId);
+      user.bookmarkedPosts = user.bookmarkedPosts.filter((bookmark) => bookmark != postId);
+    } else {
+      post.bookmarks.push(userId);
+      user.bookmarkedPosts.push(postId);
+    }
+
+    // Saving the updated post document
+    await post.save();
+    await user.save();
+    return redirect(redirectUrl);
+  } catch (error) {
+    console.error(error);
+    return json({ error: "Post could not be updated.", status: 400 });
   }
-
-  // Saving the updated post document
-  await post.save();
-  await user.save();
-  return redirect(redirectUrl);
 }
 
 export async function createComment(userId, postId, content) {
-  // Connecting to the database
-  const db = await connectDb();
+  try {
+    // Connecting to the database
+    const db = await connectDb();
 
-  // Creating the comment document in the database
-  const newComment = await db.models.Comment.create({
-    content,
-    createdBy: userId,
-    post: postId,
-  });
+    // Creating the comment document in the database
+    const newComment = await db.models.Comment.create({
+      content,
+      createdBy: userId,
+      post: postId,
+    });
 
-  // Getting the post document with the given id
-  const post = await db.models.Post.findById(postId);
+    // Getting the post document with the given id
+    const post = await db.models.Post.findById(postId);
 
-  // Adding the comment id to the post comments array
-  post.comments.push(newComment._id);
+    // Adding the comment id to the post comments array
+    post.comments.push(newComment._id);
 
-  // Saving the updated post document
-  await post.save();
+    // Saving the updated post document
+    await post.save();
 
-  return newComment;
+    return newComment;
+  } catch (error) {
+    console.error(error);
+    return json({ error: "Comment could not be created.", status: 400 });
+  }
 }
 
 export async function hasUserStarredPost(postId, userId) {
-  // Connecting to the database
-  const db = await connectDb();
+  try {
+    // Connecting to the database
+    const db = await connectDb();
 
-  // Getting the post document with the given id
-  const post = await db.models.Post.findById(postId);
+    // Getting the post document with the given id
+    const post = await db.models.Post.findById(postId);
 
-  // Checking if the user is already in the stars array
-  const hasStarred = post.stars.includes(userId);
+    // Checking if the user is already in the stars array
+    const hasStarred = post.stars.includes(userId);
 
-  return hasStarred;
+    return hasStarred;
+  } catch (error) {
+    console.error(error);
+    return json({ error: "Something went wrong.", status: 400 });
+  }
 }
 
 export async function hasUserBookmarkedPost(postId, userId) {
+  try {
+
+
   // Connecting to the database
   const db = await connectDb();
 
@@ -286,4 +292,8 @@ export async function hasUserBookmarkedPost(postId, userId) {
   const hasBookmarked = post.bookmarks.includes(userId);
 
   return hasBookmarked;
+    } catch (error) {
+    console.error(error);
+    return json({ error: "Something went wrong.", status: 400 });
+    }
 }

@@ -1,6 +1,10 @@
 import { useEffect } from "react";
 import Button from "./Button";
 
+/*
+ * This component is used to display a toast message.
+ * As of now, it is only used to display error messages.
+ */
 export default function Toast({ message, type, onClose }) {
   // Start timer to close toast
   useEffect(() => {

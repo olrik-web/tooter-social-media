@@ -8,8 +8,6 @@ import MenuRight from "~/components/MenuRight";
 export async function loader({ request }) {
   const currentUser = await getUser(request);
   const db = await connectDb();
-  // Find the posts with the most stars. The posts can be in a public group but not in a private group.
-  // Also populate the createdBy and tags fields.
 
   // Find the posts in no groups or in public groups
   const posts = await db.models.Post.find().populate("createdBy").populate("tags").populate("group").sort({ stars: -1 });
@@ -73,6 +71,16 @@ export default function ExplorePage() {
       <div>
         <MenuRight users={searchUsers} tags={searchTags} handleSearchTermChange={handleSearchTermChange} />
       </div>
+    </div>
+  );
+}
+
+// Catch any unexpected errors and display them to the user.
+export function ErrorBoundary({ error }) {
+  return (
+    <div className="text-red-500 text-center">
+      <h1 className="text-2xl font-bold">Error</h1>
+      <p>{error.message}</p>
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { Form, useParams } from "@remix-run/react";
+import { Form } from "@remix-run/react";
 import Button from "./Button";
 import FormField from "./FormField";
 import { useEffect, useState } from "react";
@@ -23,7 +23,7 @@ export default function PostForm({ errors, action, groups, post, isCreating }) {
 
   return (
     <>
-      {/* The action will be "/update" or "/create" depending on which page the SnippetForm is used on. */}
+      {/* The action will be "/update" or "/create" depending on which page the PostForm is used on. */}
       <Form method="POST" action={action}>
         {/* If there are errors, display them. */}
         {errors && (

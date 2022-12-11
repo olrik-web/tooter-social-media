@@ -1,6 +1,5 @@
 import { Form } from "@remix-run/react";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import { useRef } from "react";
 
 export default function SearchBar({ handleSearchTermChange }) {
 

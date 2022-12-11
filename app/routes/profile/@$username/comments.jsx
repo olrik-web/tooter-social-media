@@ -1,7 +1,6 @@
 import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import connectDb from "~/db/connectDb.server";
-import { requireUserLogin } from "~/utils/auth.server";
 import CommentCard from "~/components/CommentCard";
 
 export async function loader({ request, params }) {

@@ -1,6 +1,7 @@
 import { json } from "@remix-run/node";
 import connectDb from "~/db/connectDb.server";
 
+// This function creates a group document in the database and returns the group document.
 export async function createGroup({ name, description, privacy, user, members }) {
   try {
     const db = await connectDb();
@@ -19,6 +20,7 @@ export async function createGroup({ name, description, privacy, user, members })
   }
 }
 
+// This function updates a group document in the database and returns the group document.
 export async function editGroup({ groupId, name, description, privacy, user, memberUsernames }) {
   try {
     const db = await connectDb();
@@ -32,19 +34,17 @@ export async function editGroup({ groupId, name, description, privacy, user, mem
     // Check if the members are valid
     const validMembers = await db.models.User.find({ username: { $in: memberUsernames } });
 
-    console.log("Så lang så godt");
-
+    // Save the group document
     group.name = name;
     group.description = description;
     group.privacy = privacy;
     group.members = validMembers;
     await group.save();
 
-    console.log("Så lang så godt 2");
 
     return group;
   } catch (error) {
-    console.log(error.message);
+    console.error(error.message);
     return json({ error: error.message }, { status: 500 });
   }
 }

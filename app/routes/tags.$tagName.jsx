@@ -1,12 +1,12 @@
 import { json } from "@remix-run/node";
-import { useLoaderData, useSubmit } from "@remix-run/react";
+import { useLoaderData, useParams, useSubmit } from "@remix-run/react";
 import PostCard from "~/components/PostCard";
 import connectDb from "~/db/connectDb.server";
 import { getUser } from "~/utils/auth.server";
 import MenuRight from "~/components/MenuRight";
 
 export async function loader({ request, params }) {
-      const currentUser = await getUser(request);
+  const currentUser = await getUser(request);
   const db = await connectDb();
 
   // Find all posts with the tag. Also populate the createdBy and tags fields.
@@ -64,6 +64,7 @@ export async function loader({ request, params }) {
 export default function Index() {
   //   const { posts } = useLoaderData();
   const { posts, requestUrl, currentUser, searchUsers, searchTags } = useLoaderData();
+  const params = useParams();
 
   // Handle the search term change. Submit is called when the user types in the search bar. It submits the form with the new search term.
   const submit = useSubmit();
@@ -78,7 +79,7 @@ export default function Index() {
   return (
     <div className="flex flex-row">
       <div className="w-full">
-        <h1 className="text-3xl font-bold border-x border-b border-gray-600 p-4">Explore</h1>
+        <h1 className="text-3xl font-bold border-x border-b border-gray-600 p-4">Tag: {params.tagName}</h1>
         <div>
           {posts.map((post) => (
             <PostCard key={post._id} post={post} user={post.createdBy} currentUser={currentUser} requestUrl={requestUrl} />
@@ -88,6 +89,16 @@ export default function Index() {
       <div>
         <MenuRight users={searchUsers} tags={searchTags} handleSearchTermChange={handleSearchTermChange} />
       </div>
+    </div>
+  );
+}
+
+// Catch any unexpected errors and display them to the user.
+export function ErrorBoundary({ error }) {
+  return (
+    <div className="text-red-500 text-center">
+      <h1 className="text-2xl font-bold">Error</h1>
+      <p>{error.message}</p>
     </div>
   );
 }

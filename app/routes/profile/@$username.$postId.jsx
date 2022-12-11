@@ -56,7 +56,7 @@ export default function PostDetail() {
   );
 }
 
-export async function action({ request, params }) {
+export async function action({ request }) {
   const userId = await requireUserLogin(request);
   // Get the data from the form.
   const form = await request.formData();
@@ -64,12 +64,10 @@ export async function action({ request, params }) {
   const postId = form.get("postId");
   const comment = form.get("comment");
 
-  console.log("postId", postId);
-
   if (action === "comment") {
     return await createComment(userId, postId, comment);
   }
-  if (action === "deletePost") {
+  else if (action === "deletePost") {
     return await deletePost(userId, postId);
   }
 }

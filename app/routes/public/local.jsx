@@ -1,12 +1,8 @@
 import { json } from "@remix-run/node";
-import { Form, Link, NavLink, Outlet, useLoaderData, useSubmit } from "@remix-run/react";
+import { useLoaderData, useSubmit } from "@remix-run/react";
 import connectDb from "~/db/connectDb.server";
-import { requireUserLogin, logOut, getUser } from "~/utils/auth.server";
-import { updatePostBookmark, updatePostStar } from "~/utils/post.server";
-import Button from "~/components/Button";
-import { ArrowLeftIcon, CalendarDaysIcon } from "@heroicons/react/24/outline";
+import { getUser } from "~/utils/auth.server";
 import PostCard from "~/components/PostCard";
-import NavigateBackButton from "~/components/NavigateBackButton";
 import MenuRight from "~/components/MenuRight";
 
 export async function loader({ request }) {
@@ -69,6 +65,16 @@ export default function ExplorePage() {
       <div>
         <MenuRight users={searchUsers} tags={searchTags} handleSearchTermChange={handleSearchTermChange} />
       </div>
+    </div>
+  );
+}
+
+// Catch any unexpected errors and display them to the user.
+export function ErrorBoundary({ error }) {
+  return (
+    <div className="text-red-500 text-center">
+      <h1 className="text-2xl font-bold">Error</h1>
+      <p>{error.message}</p>
     </div>
   );
 }

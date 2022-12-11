@@ -54,24 +54,26 @@ export default function Edit() {
 }
 
 export async function action({ request, params }) {
+  // Require the user to be logged in.
   await requireUserLogin(request);
+
+  // Get the user from the request.
   const user = await getUser(request);
+
   // Get the data from the form.
   const form = await request.formData();
-  const name = form.get("name");
-  const description = form.get("description");
+  const name = form.get("name").trim();
+  const description = form.get("description").trim();
   const privacy = form.get("privacy");
   const memberUsernamesField = form.get("memberUsernames");
-  console.log({ memberUsernamesField });
+
   // Split the member usernames into an array and trim any whitespace.
   const memberUsernames = memberUsernamesField ? memberUsernamesField.split(",").map((username) => username.trim()) : [];
 
-  console.log(memberUsernames);
-  //   console.log({ groupId: params.groupId, name, description, privacy, user, memberUsernames });
-  // Create a new post.s
+  // Update the group in the database.
   const group = await editGroup({ groupId: params.groupId, name, description, privacy, user, memberUsernames });
 
-  // Check if the snippet was created successfully and redirect to the snippet folder page.
+  // Check if the group was edited successfully and redirect to the group page.
   if (group._id) {
     return redirect(`/groups/${group._id}`);
   } else {

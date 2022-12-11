@@ -9,7 +9,7 @@ const { SECRET } = process.env;
 // Creating a cookie session storage.
 const storage = createCookieSessionStorage({
   cookie: {
-    name: "tooter-session", 
+    name: "tooter-session",
     secure: process.env.NODE_ENV === "production",
     secrets: [SECRET],
     sameSite: "lax",
@@ -73,6 +73,10 @@ export async function signup(username, password, passwordConfirmation, firstName
   return createUserSession(JSON.stringify(user._id), "/explore");
 }
 
+/*
+ * This function is called when the user clicks save changes on their profile.
+ * It should check if a user with the same username already exists and if not update the user document.
+ */
 export async function editUser(username, password, passwordConfirmation, firstName, lastName, currentUser) {
   const errors = {
     username: { message: validateUsername(username) },

@@ -11,14 +11,12 @@ export async function loader({ params, request }) {
   // Get the user that is currently logged in.
   const userId = await requireUserLogin(request);
 
-  // Find the snippet that is being edited and return it with the snippetFolder.
   const db = await connectDb();
-  // Find snippet by id where field userId is equal to the current user id.
   const post = await db.models.Post.findOne({
     _id: params.postId,
     createdBy: userId,
   });
-  
+
   // If the post has been deleted, redirect them to the home page.
   if (post.isDeleted) {
     return redirect("/");
@@ -29,8 +27,6 @@ export async function loader({ params, request }) {
   // Add the tags to the post.
   const postWithTags = { ...post.toObject(), tags };
 
-  // The lean option is used to return a plain JavaScript object instead of a Mongoose document. This is useful for performance reasons.
-  // https://mongoosejs.com/docs/tutorials/lean.html
   const groups = await db.models.Group.find({ members: { $in: [userId] } }, { name: 1, _id: 1 }).lean();
   const currentUser = await getUser(request);
 

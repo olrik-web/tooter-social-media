@@ -1,6 +1,6 @@
 import { requireUserLogin } from "~/utils/auth.server";
 import connectDb from "~/db/connectDb.server";
-import { Link, useLoaderData, useSubmit } from "@remix-run/react";
+import { useLoaderData, useSubmit } from "@remix-run/react";
 import MenuRight from "~/components/MenuRight";
 import Button from "~/components/Button";
 import GroupCard from "~/components/GroupCard";
@@ -68,6 +68,16 @@ export default function Groups() {
       <div>
         <MenuRight users={searchUsers} tags={searchTags} handleSearchTermChange={handleSearchTermChange} />
       </div>
+    </div>
+  );
+}
+
+// Catch any unexpected errors and display them to the user.
+export function ErrorBoundary({ error }) {
+  return (
+    <div className="text-red-500 text-center">
+      <h1 className="text-2xl font-bold">Error</h1>
+      <p>{error.message}</p>
     </div>
   );
 }

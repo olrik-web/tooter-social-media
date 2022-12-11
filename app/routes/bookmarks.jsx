@@ -77,3 +77,13 @@ export default function BookmarksPage() {
     </div>
   );
 }
+
+// Catch any unexpected errors and display them to the user.
+export function ErrorBoundary({ error }) {
+  return (
+    <div className="text-red-500 text-center">
+      <h1 className="text-2xl font-bold">Error</h1>
+      <p>{error.message}</p>
+    </div>
+  );
+}

@@ -8,9 +8,7 @@ import { createGroup } from "~/utils/group.server";
 
 export default function NewGroup() {
   const actionData = useActionData();
-  //   const { groups } = useLoaderData();
   const transition = useTransition();
-  //   const { currentUser } = useLoaderData();
 
   // Check if we are in a loading or submitting state and if the action is "create".
   const isCreating =
@@ -35,18 +33,20 @@ export default function NewGroup() {
 }
 
 export async function action({ request }) {
+  // Require the user to be logged in.
   await requireUserLogin(request);
+  // Get the user from the request.
   const user = await getUser(request);
   // Get the data from the form.
   const form = await request.formData();
-  const name = form.get("name");
-  const description = form.get("description");
+  const name = form.get("name").trim();
+  const description = form.get("description").trim();
   const privacy = form.get("privacy");
 
   // Create a new post.
   const group = await createGroup({ name, description, privacy, user });
 
-  // Check if the snippet was created successfully and redirect to the snippet folder page.
+  // Check if the group was created successfully and redirect to the group page.
   if (group._id) {
     return redirect(`/groups/${group._id}`);
   } else {
