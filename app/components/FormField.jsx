@@ -59,7 +59,6 @@ export default function FormField({
           {children}
         </select>
       )}
-      {/* TODO: Fix this */}
       <div className="text-xs font-semibold text-center tracking-wide text-red-500 w-full">
         {errors?.message || errors?.error || errors?.name?.message}
       </div>

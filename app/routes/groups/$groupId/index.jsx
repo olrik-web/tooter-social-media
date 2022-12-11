@@ -27,8 +27,7 @@ export async function loader({ request, params }) {
         path: "tags",
         model: "Tag",
       },
-    })
-    .limit(100);
+    });
 
   if (!group) {
     return redirect("/groups");

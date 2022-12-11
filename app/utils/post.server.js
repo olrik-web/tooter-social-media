@@ -147,7 +147,7 @@ export async function updatePost(request, params, content, groupId, tags, images
         await tag.save();
       }
     }
-    // TODO: Return redirect
+    
     if (groupId) {
       return redirect(`/groups/${groupId}/${post._id}`);
     } else {

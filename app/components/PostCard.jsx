@@ -79,22 +79,22 @@ export default function PostCard({ post, group, user, currentUser, detailView, o
       data-post-id={post?._id}
       className="w-full border border-gray-600 grid grid-cols-[min-content_1fr] transition-opacity duration-500 ease-in-out"
     >
-      <Link to={`/profile/@${user.username}`} className="my-4 ml-2 w-12">
-        <img src={user.avatar} alt="avatar" className="h-12 w-12 rounded-full" />
+      <Link to={`/profile/@${user?.username}`} className="my-4 ml-2 w-12">
+        <img src={user?.avatar} alt="avatar" className="h-12 w-12 rounded-full" />
       </Link>
       <div className="p-4" key={post?._id}>
         {/* Post and user info */}
         <div className="flex flex-row justify-between">
-          <Link to={`/profile/@${user.username}`} className="flex flex-row">
-            {user.firstName} {user.lastName}
+          <Link to={`/profile/@${user?.username}`} className="flex flex-row">
+            {user?.firstName} {user?.lastName}
             <span className="mx-2 text-sm text-gray-500">
-              @{user.username} &#8226; {postDate}
+              @{user?.username} &#8226; {postDate}
             </span>
           </Link>
           {/* Edit post buttons */}
           {detailView && currentUser?._id === post?.createdBy && (
             <div className="flex flex-row gap-x-4">
-              <Link to={`/profile/@${user.username}/${post?._id}/edit`}>
+              <Link to={`/profile/@${user?.username}/${post?._id}/edit`}>
                 <PencilSquareIcon className="text-blue-500 hover:text-blue-700 w-6 h-6 transition-colors duration-300 ease-in-out" />
               </Link>
               <button
@@ -107,11 +107,11 @@ export default function PostCard({ post, group, user, currentUser, detailView, o
           )}
         </div>
         {/* Post tags */}
-        <Link to={`/profile/@${user.username}/${post?._id}`}>
+        <Link to={`/profile/@${user?.username}/${post?._id}`}>
           {!post?.isDeleted === true ? (
-          <p className="text-sm mb-2">{post?.content}</p>
-          ): (
-          <p className="text-sm mb-2 text-gray-500 font-bold">This post has been deleted.</p>
+            <p className="text-sm mb-2">{post?.content}</p>
+          ) : (
+            <p className="text-sm mb-2 text-gray-500 font-bold">This post has been deleted.</p>
           )}
         </Link>
         {post?.tags && !post?.isDeleted && (
@@ -125,28 +125,23 @@ export default function PostCard({ post, group, user, currentUser, detailView, o
         )}
         {/* Post images */}
         {post?.images && (
-          <Link to={`/profile/@${user.username}/${post?._id}`} className="grid grid-cols-2 gap-2 ">
+          <Link to={`/profile/@${user?.username}/${post?._id}`} className=" gap-2 grid grid-cols-1 md:grid-cols-2">
             {post?.images.map((image) => (
-              <img
-                src={image}
-                alt="post"
-                className="w-full h-full max-h-80 object-cover border border-gray-600 rounded-xl"
-                key={image}
-              />
+              <img src={image} alt="post" className="w-full h-full max-h-80 object-cover border border-gray-600 rounded-xl" key={image} />
             ))}
           </Link>
         )}
         {/* Post comments */}
         <div className="flex flex-row justify-between mt-4">
           <Link
-            to={`/profile/@${user.username}/${post?._id}`}
+            to={`/profile/@${user?.username}/${post?._id}`}
             className="flex flex-row gap-x-2 items-center border-hidden rounded-full p-2 hover:bg-blue-500/50 transition-colors duration-300 ease-in-out"
           >
             <ChatBubbleOvalLeftIcon className="w-6 h-6 text-gray-500" />
             <p className="text-sm text-gray-500 font-bold">{post?.comments?.length}</p>
           </Link>
           {/* Post stars */}
-          <Form method="post" action={`/profile/@${user.username}/${post?._id}/star`}>
+          <Form method="post" action={`/profile/@${user?.username}/${post?._id}/star`}>
             <input type="hidden" name="postId" value={post?._id} />
             <input type="hidden" name="redirectUrl" value={requestUrl} />
             <button
@@ -158,13 +153,11 @@ export default function PostCard({ post, group, user, currentUser, detailView, o
               className="flex flex-row gap-x-2 items-center border-hidden rounded-full p-2 hover:bg-yellow-300/20 transition-colors duration-300 ease-in-out"
             >
               <StarIcon className={`w-6 h-6 ${hasUserStarredPost() ? "text-yellow-500" : "text-gray-500"}`} />
-              <p className={`text-sm font-bold ${hasUserStarredPost() ? "text-yellow-500" : "text-gray-500"}`}>
-                {post?.stars?.length}
-              </p>
+              <p className={`text-sm font-bold ${hasUserStarredPost() ? "text-yellow-500" : "text-gray-500"}`}>{post?.stars?.length}</p>
             </button>
           </Form>
           {/* Post bookmarks */}
-          <Form method="post" action={`/profile/@${user.username}/${post?._id}/bookmark`}>
+          <Form method="post" action={`/profile/@${user?.username}/${post?._id}/bookmark`}>
             <input type="hidden" name="postId" value={post?._id} />
             <input type="hidden" name="redirectUrl" value={requestUrl} />
             <button
@@ -181,15 +174,13 @@ export default function PostCard({ post, group, user, currentUser, detailView, o
         </div>
       </div>
 
-      {showDeleteToast === true && (
-        <Toast message={`Post ${post?.content} could not be deleted`} type="error" onClose={closeDeleteToast} />
-      )}
+      {showDeleteToast === true && <Toast message={`Post ${post?.content} could not be deleted`} type="error" onClose={closeDeleteToast} />}
 
       {showDeletePostModal === true && (
         <Modal
           title="Delete post?"
           onClose={closeDeletePostModal}
-          actionPath={`/profile/@${user.username}/${post?._id}`}
+          actionPath={`/profile/@${user?.username}/${post?._id}`}
           id={post?._id}
           onSubmit={onSubmit}
         >

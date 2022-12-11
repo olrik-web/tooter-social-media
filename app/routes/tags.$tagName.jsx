@@ -1,22 +1,36 @@
 import { json } from "@remix-run/node";
 import { useLoaderData, useSubmit } from "@remix-run/react";
+import PostCard from "~/components/PostCard";
 import connectDb from "~/db/connectDb.server";
 import { getUser } from "~/utils/auth.server";
-import PostCard from "~/components/PostCard";
 import MenuRight from "~/components/MenuRight";
 
-export async function loader({ request }) {
-  const currentUser = await getUser(request);
+export async function loader({ request, params }) {
+      const currentUser = await getUser(request);
   const db = await connectDb();
-  // Find the posts with the most stars. The posts can be in a public group but not in a private group.
-  // Also populate the createdBy and tags fields.
 
-  // Find the posts in no groups or in public groups
-  const posts = await db.models.Post.find().populate("createdBy").populate("tags").populate("group").sort({ stars: -1 });
+  // Find all posts with the tag. Also populate the createdBy and tags fields.
+  const tag = await db.models.Tag.findOne({
+    name: params.tagName,
+  })
+    .populate("posts")
+    .populate({
+      path: "posts",
+      populate: {
+        path: "createdBy",
+        model: "User",
+      },
+    })
+    .populate({
+      path: "posts",
+      populate: {
+        path: "tags",
+        model: "Tag",
+      },
+    });
 
   // Remove private groups from the posts
-  // TODO: Maybe this can be done in the query above?
-  const filteredPosts = posts.filter((post) => {
+  const filteredPosts = tag.posts.filter((post) => {
     if (post.group?.privacy === "private") {
       return false;
     }
@@ -47,7 +61,8 @@ export async function loader({ request }) {
   return json({ posts: filteredPosts, currentUser, searchUsers, searchTags, requestUrl: request.url });
 }
 
-export default function ExplorePage() {
+export default function Index() {
+  //   const { posts } = useLoaderData();
   const { posts, requestUrl, currentUser, searchUsers, searchTags } = useLoaderData();
 
   // Handle the search term change. Submit is called when the user types in the search bar. It submits the form with the new search term.

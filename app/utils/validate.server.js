@@ -1,6 +1,11 @@
 // This function checks if the username is empty and if it is it returns an error message.
 export function validateUsername(username) {
   if (!username || username.length === 0) return "Please enter a username.";
+  // Regex to check if the username is valid.
+  const usernameRegex = /^[a-zA-Z0-9]+$/;
+  if (!usernameRegex.test(username)) {
+    return "Username can only contain letters and numbers.";
+  }
 }
 
 // This function checks if the password is at least 6 characters long and returns an error message if it is not.
@@ -13,7 +18,7 @@ export function validatePasswords(password) {
 
 // This function compares the password and password confirmation and returns an error message if they do not match.
 export function validatePasswordConfirmation(password, passwordConfirmation) {
-  if (!passwordConfirmation) return "Please repeat your password."; 
+  if (!passwordConfirmation) return "Please repeat your password.";
   if (password !== passwordConfirmation) return "Passwords do not match.";
 }
 

@@ -9,7 +9,7 @@ const { SECRET } = process.env;
 // Creating a cookie session storage.
 const storage = createCookieSessionStorage({
   cookie: {
-    name: "awp-exam-session", // TODO: Change name here
+    name: "tooter-session", 
     secure: process.env.NODE_ENV === "production",
     secrets: [SECRET],
     sameSite: "lax",
@@ -73,6 +73,60 @@ export async function signup(username, password, passwordConfirmation, firstName
   return createUserSession(JSON.stringify(user._id), "/explore");
 }
 
+export async function editUser(username, password, passwordConfirmation, firstName, lastName, currentUser) {
+  const errors = {
+    username: { message: validateUsername(username) },
+    password: { message: validatePasswords(password) },
+    passwordConfirmation: { message: validatePasswordConfirmation(password, passwordConfirmation) },
+    firstName: { message: validateName(firstName) },
+    lastName: { message: validateName(lastName) },
+  };
+
+  if (
+    errors.username.message ||
+    errors.password.message ||
+    errors.firstName.message ||
+    errors.lastName.message ||
+    errors.passwordConfirmation.message
+  ) {
+    return json(errors);
+  }
+
+  try {
+    // Connecting to the database
+    const db = await connectDb();
+
+    // Check if a new username is entered
+    if (username !== currentUser.username) {
+      // Checking if a user with the same username exist
+      const userExists = await db.models.User.findOne({
+        username,
+      });
+
+      // If a user with the same username exists we return an error message and a status code of 400 (Bad Request).
+      if (userExists) {
+        return json({ username: { message: "A user already exists with that username.", status: 400 } });
+      }
+    }
+
+    // Updating a user document in the database
+    currentUser.username = username;
+    currentUser.firstName = firstName;
+    currentUser.lastName = lastName;
+    if (password) {
+      currentUser.password = password;
+    }
+    await currentUser.save();
+
+    return redirect(`/profile/@${currentUser.username}`);
+  } catch {
+    return json({
+      error: "Something went wrong trying to edit the user.",
+      status: 400,
+    });
+  }
+}
+
 // This function creates a session for the user and redirects them to a page.
 export async function createUserSession(userId, redirectTo) {
   // Getting the session.
@@ -127,7 +181,6 @@ export async function getUserId(request) {
 // This function is called in most loader functions to check if the user is logged in and if not redirect them to /login.
 export async function requireUserLogin(request) {
   const userId = await getUserId(request);
-
 
   // If the user is not found we return a redirect response to /login.
   if (!userId) {

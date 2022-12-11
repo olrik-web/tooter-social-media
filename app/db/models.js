@@ -68,7 +68,7 @@ const postSchema = new Schema(
     content: {
       type: String,
       required: true,
-      maxlength: 500, // Limit the description to 500 characters.
+      maxlength: 500, // Limit the content to 500 characters.
     },
     createdBy: {
       type: Schema.Types.ObjectId,

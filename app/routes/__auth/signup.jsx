@@ -40,8 +40,6 @@ export async function action({ request }) {
   const firstName = form.get("firstName");
   const lastName = form.get("lastName");
 
-  // TODO: Regex username
-
   // Sign up the user and return the response.
   return await signup(username, password, passwordConfirmation, firstName, lastName);
 }

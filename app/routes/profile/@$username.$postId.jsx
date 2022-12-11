@@ -1,7 +1,7 @@
 import { requireUserLogin } from "~/utils/auth.server";
 import connectDb from "~/db/connectDb.server";
 import { json } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { useLoaderData, useTransition } from "@remix-run/react";
 import PostCard from "~/components/PostCard";
 import CommentForm from "~/components/CommentForm";
 import CommentCard from "~/components/CommentCard";
@@ -28,14 +28,26 @@ export async function loader({ request, params }) {
 
 export default function PostDetail() {
   const { user, currentUser, postWithTags, comments, requestUrl } = useLoaderData();
-  // TODO: Use nested routing to show the comments. If comments fail to load the toot is still shown.
+  const transition = useTransition();
+
+  // Check if we are in a loading or submitting state and if the action is "create".
+  const isCreating =
+    (transition.state === "submitting" || transition.state === "loading") && transition.submission?.formData.get("_action") === "comment";
+  // If we are in a loading or submitting state we show some pending UI.
+  // TODO: Use nested routes so we can see the post even if comments fail to load. Like in the profile page.
   return (
     <>
       <NavigateBackButton showText={true} />
       <PostCard post={postWithTags} user={user} currentUser={currentUser} requestUrl={requestUrl} comments={comments} detailView={true} />
-
       {/* Form for creating comments */}
       <CommentForm postId={postWithTags._id} user={user} currentUser={currentUser} />
+      {/* Pending UI */}
+      {isCreating && (
+        <div className="flex flex-col items-center justify-center mt-4 gap-y-4">
+          <h3 className="text-xl font-bold">Commment pending...</h3>
+          <img src="/images/spinner.png" alt="Loading" className="animate-spin h-20 w-20" />
+        </div>
+      )}
       {/* All comments */}
       {comments.map((comment) => (
         <CommentCard key={comment._id} comment={comment} />

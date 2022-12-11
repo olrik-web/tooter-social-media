@@ -14,7 +14,7 @@ export async function loader({ request }) {
   // Find the current user using the userId from the session.
   const db = await connectDb();
   // Find the most recent posts. Also populate the createdBy field with the user data and the tags field with the tag data.
-  const posts = await db.models.Post.find().populate("createdBy").populate("tags").sort({ createdAt: -1 }).limit(50);
+  const posts = await db.models.Post.find().populate("createdBy").populate("tags").sort({ createdAt: -1 });
 
   // Remove posts that are posted in groups.
   const filteredPosts = posts.filter((post) => post.group === null);
@@ -50,7 +50,7 @@ export default function ExplorePage() {
   const submit = useSubmit();
   function handleSearchTermChange(event) {
     const searchQuery = event.currentTarget;
-    const waitTime = 1000;
+    const waitTime = 500;
     // Debounce the search term so that it doesn't fire off a request for every keystroke
     setTimeout(() => {
       submit(searchQuery);

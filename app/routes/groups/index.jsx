@@ -45,7 +45,7 @@ export default function Groups() {
   const submit = useSubmit();
   function handleSearchTermChange(event) {
     const searchQuery = event.currentTarget;
-    const waitTime = 1000;
+    const waitTime = 500;
     // Debounce the search term so that it doesn't fire off a request for every keystroke
     setTimeout(() => {
       submit(searchQuery);

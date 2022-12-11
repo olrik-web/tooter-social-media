@@ -95,8 +95,6 @@ export default function PostForm({ errors, action, groups, post, isCreating }) {
           </Button>
         </div>
       </Form>
-      {/* TODO: Check if this is necessary. This error message will be displayed if something went really wrong.*/}
-      <div className="text-xs font-semibold text-center tracking-wide text-red-500 w-full">{errors?.error || errors}</div>
     </>
   );
 }
