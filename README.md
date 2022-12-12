@@ -1,63 +1,90 @@
-# Welcome to Snip Elephant
+# Welcome to Tooter!
 
-- [Check out the running solution](https://awp-snippet-saver-q9p5.onrender.com/) (Please be patient if it appears to be stuck loading. It is hosted using a free plan, which goes on "standby" after a while. It should be ready within a few minutes)
-- Create a new user or use the following:
-- Email: admin@admin.com
-- Password: snip123
+- [Check out the running solution on Render](https://tooter.onrender.com/) (Please be patient if it appears to be stuck loading. It is hosted using a free plan, which goes on "standby" after a while. It should be ready within a few minutes)
+  Create an account or use the following credentials to login:
 
-## Snip Elephant
+```sh
+username: john
+password: password
+```
 
-Snip Elephant is a school assignment which is built using React, [Remix Framework](https://remix.run/), MongoDB and Mongoose. 
+## What is Tooter?
 
-The purpose of Snip Elephant is too allow developers to save code snippets. The snippets are saved in folders to allow the user to organise their snippets for quick access. It is called Snip Elephant because an elephant has great memory and can remember your code snippets so you don't have to. 
+Tooter is a social media platform, where users can post short messages (toots) and follow other users. It is inspired by Twitter and Mastodon.
+It was created as the final exam project for the course "Advanced Web Programming" at Business Academy Aarhus.
 
-It is a work in progress. Here I've listed some of the missing features, which I'm working on:
-- Edit/delete collections
-- Edit/delete profile 
-- About page
-- Make it a progressive web app (installable, service worker, offline access, caching, push notifications)
-- Dark Mode
-- Auto-save funcionality when creating/editing a snippet
-- Export code to HTML, PDF, plaintext, JSON ...?
-- Accept cookies popup
-- Several UI improvements
+A toot is a short sound made by a trumpet or other musical instrument and it is also similar to a tweet.
+Apparently, the name "Toot" is a slang term for fart and a drug reference. I didn't know that when I chose the name. :sweat_smile:
+
+The purpose of Tooter is to demonstrate my knowledge of the following technologies:
+
+- [Remix](https://remix.run/) - A framework for building React apps with server-side rendering, routing, data fetching, and more.
+- [MongoDB](https://www.mongodb.com/) - A document database with the scalability and flexibility that you want with the querying and indexing that you need.
+- [Tailwind CSS](https://tailwindcss.com/) - A utility-first CSS framework for rapidly building custom designs.
+- [React](https://reactjs.org/) - A JavaScript library for building user interfaces.
+- [Mongoose](https://mongoosejs.com/) - Elegant MongoDB object modeling.
+
+## Features
+
+- [x] Create an account
+- [x] Login
+- [x] Logout
+- [x] Edit account
+- [x] Follow/unfollow other users
+- [x] Post toots
+- [x] Edit toots
+- [x] Delete toots
+- [x] Star(like) toots
+- [x] Bookmark toots
+- [x] Comment on toots
+- [x] See a list of the most starred toots
+- [x] See a list of the most recent toots
+- [x] See a list of the most recent toots from the users you follow
+- [x] Create public and private groups, where you can post toots
+- [x] View a list of all groups you are a member of
+- [x] View a profile page for a user
+- [x] View all toots from a user
+- [x] View all comments from a user
+- [x] View all starred toots from a user
+- [x] Search for users and tags
+- [x] Dark mode and light mode (based on system preferences)
+- [x] Responsive design
+- [x] Some basic accessibility features
+- [x] Nested routes
+- [x] Optimistic UI
+- [x] Pending UI
+- [x] Error UI
+
 
 ## Development
 
-Read the [Remix Docs](https://remix.run/docs) for more information on the Remix framework. 
+Read the [Remix Docs](https://remix.run/docs) for more information on the Remix framework.
 
-Clone the repository and add a ```.env``` file to your root directory. The file should include the following key/value pairs:
+Clone the repository and add a `.env` file to your root directory. The file should include the following key/value pairs:
+
 ```
-MONGODB_URL=mongodb+srv://<your username>:<your password>@cluster0.97ocrib.mongodb.net/<your database>
+MONGODB_URL=mongodb+srv://<username>:<password>@cluster0.97ocrib.mongodb.net/<db name>
 ```
-and 
+
+and
+
 ```
-SECRET=<your secret>
+SECRET=<secret>
 ```
 
 If you want to run the solution on your machine. Type the following in the terminal:
 
 To install the required dependencies
+
 ```sh
 npm install
 ```
+
 To run the solution locally
+
 ```sh
 npm run dev
 ```
 
 This starts your app in development mode, rebuilding assets on file changes.
 
-## Below are a few screenshots of the UI
-
-### The front page
-![Front page](/app/images/Homepage.png)
-
-### Signing up
-![Signing up](/app/images/SignUp.png)
-
-### Creating a new snippet
-![Creating a new snippet](/app/images/CreateSnippet.png)
-
-### Seaching for a snippet
-![Searching for a snippet](/app/images/Searching.png)
