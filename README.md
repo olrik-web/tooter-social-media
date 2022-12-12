@@ -14,7 +14,6 @@ Tooter is a social media platform, where users can post short messages (toots) a
 It was created as the final exam project for the course "Advanced Web Programming" at Business Academy Aarhus.
 
 A toot is a short sound made by a trumpet or other musical instrument. The word shares similarities with the word "tweet", which is used by Twitter.
-Apparently, the name "Toot" is a slang term for fart and a drug reference. I didn't know that when I chose the name. :sweat_smile: 
 
 The purpose of Tooter is to demonstrate my knowledge of the following technologies:
 
