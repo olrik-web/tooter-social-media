@@ -1,20 +1,20 @@
-# Welcome to Tooter!
+# Welcome to Tooter! :trumpet:
 
-- [Check out the running solution on Render](https://tooter.onrender.com/) (Please be patient if it appears to be stuck loading. It is hosted using a free plan, which goes on "standby" after a while. It should be ready within a few minutes)
+[Check out the running solution on Render](https://tooter.onrender.com/) (Please be patient if it appears to be stuck loading. It is hosted using a free plan, which goes on "standby" after a while. It should be ready within a few minutes)
   Create an account or use the following credentials to login:
 
 ```sh
-username: john
-password: password
+Username: john
+Password: password
 ```
 
-## What is Tooter?
+## What is Tooter? :thinking:
 
 Tooter is a social media platform, where users can post short messages (toots) and follow other users. It is inspired by Twitter and Mastodon.
 It was created as the final exam project for the course "Advanced Web Programming" at Business Academy Aarhus.
 
-A toot is a short sound made by a trumpet or other musical instrument and it is also similar to a tweet.
-Apparently, the name "Toot" is a slang term for fart and a drug reference. I didn't know that when I chose the name. :sweat_smile:
+A toot is a short sound made by a trumpet or other musical instrument. The word shares similarities with the word "tweet", which is used by Twitter.
+Apparently, the name "Toot" is a slang term for fart and a drug reference. I didn't know that when I chose the name. :sweat_smile: 
 
 The purpose of Tooter is to demonstrate my knowledge of the following technologies:
 
@@ -24,7 +24,7 @@ The purpose of Tooter is to demonstrate my knowledge of the following technologi
 - [React](https://reactjs.org/) - A JavaScript library for building user interfaces.
 - [Mongoose](https://mongoosejs.com/) - Elegant MongoDB object modeling.
 
-## Features
+## Features :sparkles:
 
 - [x] Create an account
 - [x] Login
@@ -56,7 +56,7 @@ The purpose of Tooter is to demonstrate my knowledge of the following technologi
 - [x] Error UI
 
 
-## Development
+## Development :computer:
 
 Read the [Remix Docs](https://remix.run/docs) for more information on the Remix framework.
 
